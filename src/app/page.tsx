@@ -1,7 +1,6 @@
 import { FadeIn } from "@/components/FadeIn";
 import { LocalClock } from "@/components/LocalClock";
 import { NowPlaying } from "@/components/NowPlaying";
-import { WeeklyCycling } from "@/components/WeeklyCycling";
 
 export default function Home() {
   return (
@@ -9,12 +8,7 @@ export default function Home() {
       <FadeIn>
         <NowPlaying />
       </FadeIn>
-      <FadeIn delay={0.1}>
-        <div className="mt-2">
-          <WeeklyCycling />
-        </div>
-      </FadeIn>
-      <FadeIn delay={0.3}>
+      <FadeIn delay={0.2}>
         <div className="mt-3 font-mono text-xs text-brand-muted/60">
           <LocalClock />
         </div>

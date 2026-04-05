@@ -7,14 +7,23 @@ interface TrackData {
   songUrl: string;
 }
 
+interface CyclingData {
+  km: number;
+}
+
 interface NowPlayingResponse {
   isPlaying: boolean;
   title?: string;
   songUrl?: string;
 }
 
+interface WeeklyResponse {
+  km: number;
+}
+
 export function NowPlaying() {
   const [track, setTrack] = useState<TrackData | null>(null);
+  const [cycling, setCycling] = useState<CyclingData | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -36,7 +45,21 @@ export function NowPlaying() {
       }
     }
 
+    async function fetchCycling() {
+      try {
+        const res = await fetch("/api/strava/weekly");
+        if (!res.ok) return;
+        const data: WeeklyResponse = await res.json();
+        if (active && data.km > 0) {
+          setCycling({ km: data.km });
+        }
+      } catch {
+        // Non-critical
+      }
+    }
+
     fetchTrack();
+    fetchCycling();
     const interval = setInterval(fetchTrack, 30_000);
 
     return () => {
@@ -45,7 +68,10 @@ export function NowPlaying() {
     };
   }, []);
 
-  if (!track) {
+  const hasMusic = !!track;
+  const hasCycling = !!cycling;
+
+  if (!hasMusic && !hasCycling) {
     return (
       <p className="font-mono text-sm font-bold tracking-wide text-brand-muted text-center">
         Currently exploring what&apos;s next.
@@ -56,16 +82,24 @@ export function NowPlaying() {
   return (
     <p className="font-mono text-sm font-bold tracking-wide text-brand-muted text-center">
       Currently exploring what&apos;s next
-      <br />
-      while listening to{" "}
-      <a
-        href={track.songUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="underline underline-offset-4 hover:text-brand-dark transition-colors"
-      >
-        {track.title}
-      </a>
+      {hasCycling && (
+        <>
+          {" "}on my bike ({cycling.km} km this week)
+        </>
+      )}
+      {hasMusic && (
+        <>
+          {" "}while listening to{" "}
+          <a
+            href={track.songUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4 hover:text-brand-dark transition-colors"
+          >
+            {track.title}
+          </a>
+        </>
+      )}
       .
     </p>
   );
