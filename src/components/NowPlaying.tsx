@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { TypewriterText } from "./TypewriterText";
+import { AlbumHover } from "./AlbumHover";
 
 interface TrackData {
   title: string;
   songUrl: string;
+  albumArt: string;
 }
 
 interface CyclingData {
@@ -16,6 +18,7 @@ interface NowPlayingResponse {
   isPlaying: boolean;
   title?: string;
   songUrl?: string;
+  albumArt?: string;
 }
 
 interface WeeklyResponse {
@@ -36,7 +39,7 @@ export function NowPlaying() {
         const data: NowPlayingResponse = await res.json();
         if (active) {
           if (data.isPlaying && data.title && data.songUrl) {
-            setTrack({ title: data.title, songUrl: data.songUrl });
+            setTrack({ title: data.title, songUrl: data.songUrl, albumArt: data.albumArt ?? "" });
           } else {
             setTrack(null);
           }
@@ -91,14 +94,9 @@ export function NowPlaying() {
       {hasMusic && (
         <>
           {" "}while listening to{" "}
-          <a
-            href={track.songUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-4 hover:text-brand-dark transition-colors"
-          >
+          <AlbumHover albumArt={track.albumArt} songUrl={track.songUrl}>
             <TypewriterText text={track.title} />
-          </a>
+          </AlbumHover>
         </>
       )}
       .
