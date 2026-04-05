@@ -4,23 +4,13 @@ import { useEffect, useState } from "react";
 
 interface TrackData {
   title: string;
-  artist: string;
   songUrl: string;
 }
 
 interface NowPlayingResponse {
   isPlaying: boolean;
   title?: string;
-  artist?: string;
   songUrl?: string;
-}
-
-interface RecentItem {
-  track: {
-    name: string;
-    artists: { name: string }[];
-    external_urls: { spotify: string };
-  };
 }
 
 export function NowPlaying() {
@@ -31,27 +21,14 @@ export function NowPlaying() {
 
     async function fetchTrack() {
       try {
-        // Try currently playing first
-        const nowRes = await fetch("/api/spotify/now-playing");
-        if (nowRes.ok) {
-          const data: NowPlayingResponse = await nowRes.json();
-          if (data.isPlaying && data.title && data.artist && data.songUrl) {
-            if (active) setTrack({ title: data.title, artist: data.artist, songUrl: data.songUrl });
-            return;
-          }
-        }
-
-        // Fall back to most recently played
-        const recentRes = await fetch("/api/spotify/recently-played");
-        if (recentRes.ok) {
-          const items: RecentItem[] = await recentRes.json();
-          if (items.length > 0) {
-            const t = items[0].track;
-            if (active) setTrack({
-              title: t.name,
-              artist: t.artists.map(a => a.name).join(", "),
-              songUrl: t.external_urls.spotify,
-            });
+        const res = await fetch("/api/spotify/now-playing");
+        if (!res.ok) return;
+        const data: NowPlayingResponse = await res.json();
+        if (active) {
+          if (data.isPlaying && data.title && data.songUrl) {
+            setTrack({ title: data.title, songUrl: data.songUrl });
+          } else {
+            setTrack(null);
           }
         }
       } catch {
