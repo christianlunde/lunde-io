@@ -6,34 +6,24 @@ export function LocalClock() {
   const [info, setInfo] = useState<{ city: string; time: string } | null>(null);
 
   useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const city = timezone.split("/").pop()?.replace(/_/g, " ") || "";
 
-    async function init() {
-      try {
-        const res = await fetch("https://worldtimeapi.org/api/ip");
-        const data = await res.json();
-        const timezone = data.timezone as string;
-        const city = timezone.split("/").pop()?.replace(/_/g, " ") || "";
-
-        function getTime() {
-          return new Intl.DateTimeFormat("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-            timeZone: timezone,
-          }).format(new Date());
-        }
-
-        setInfo({ city, time: getTime() });
-
-        interval = setInterval(() => {
-          setInfo((prev) => prev ? { ...prev, time: getTime() } : null);
-        }, 30_000);
-      } catch {
-        // Silently fail — clock is a nice-to-have
-      }
+    function getTime() {
+      return new Intl.DateTimeFormat("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: timezone,
+      }).format(new Date());
     }
 
-    init();
+    setInfo({ city, time: getTime() });
+
+    const interval = setInterval(() => {
+      setInfo((prev) => (prev ? { ...prev, time: getTime() } : null));
+    }, 30_000);
+
     return () => clearInterval(interval);
   }, []);
 

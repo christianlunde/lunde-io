@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FadeIn } from "@/components/FadeIn";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { Header } from "@/components/Header";
 import { LocalClock } from "@/components/LocalClock";
 import { getProjects, getJournalPosts, getAbout } from "@/sanity/queries";
 
@@ -16,11 +16,12 @@ export default async function Home() {
 
   return (
     <>
+      {/* Header */}
+      <Header />
+
       {/* Hero — full viewport */}
-      <section className="flex min-h-dvh flex-col justify-between px-6 py-8 sm:px-12 sm:py-10">
-        <div className="flex justify-end">
-          <ThemeToggle />
-        </div>
+      <section className="flex min-h-[calc(100dvh-72px)] flex-col justify-between px-6 pb-8 sm:px-12 sm:pb-10">
+        <div />
 
         <FadeIn>
           <div className="max-w-2xl">
@@ -32,7 +33,7 @@ export default async function Home() {
             <p className="mt-5 text-sm leading-relaxed font-mono sm:text-base sm:mt-6">
               Currently exploring what&rsquo;s next.
               <br />
-              Former partner at{" "}
+              Previously Head of Design at{" "}
               <a
                 href="https://agens.no"
                 target="_blank"
@@ -47,31 +48,7 @@ export default async function Home() {
         </FadeIn>
 
         <FadeIn delay={0.2}>
-          <div className="flex flex-col gap-3 pb-2 sm:flex-row sm:items-center sm:justify-between">
-            <nav className="flex flex-wrap gap-x-8 gap-y-2 text-sm font-mono sm:text-base">
-              <Link
-                href="/journal"
-                className="underline-offset-4 hover:underline transition-all"
-              >
-                Journal
-              </Link>
-              <a
-                href="https://www.instagram.com/christianlunde/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline-offset-4 hover:underline transition-all"
-              >
-                Instagram
-              </a>
-              <a
-                href="https://www.linkedin.com/in/chrlunde/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline-offset-4 hover:underline transition-all"
-              >
-                LinkedIn
-              </a>
-            </nav>
+          <div className="flex items-center justify-between pb-2">
             <div className="text-sm font-mono">
               <LocalClock />
             </div>
@@ -81,6 +58,46 @@ export default async function Home() {
 
       {/* Content sections */}
       <div className="mx-auto max-w-2xl px-6 pb-20 sm:px-12">
+        {/* Clients */}
+        <section className="pt-20">
+          <FadeIn>
+            <h2 className="font-mono text-sm text-brand-muted">Selected clients</h2>
+            <div className="mt-8 grid grid-cols-3 sm:grid-cols-4 gap-8 items-center opacity-60">
+              {[
+                "BBC", "Gjensidige", "Norsk Tipping", "Meny",
+                "Huma", "Fæbrik", "Sony Music", "Uber",
+              ].map((name) => (
+                <div
+                  key={name}
+                  className="flex h-10 items-center justify-center font-heading font-bold text-sm text-brand-dark/50"
+                >
+                  {name}
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+        </section>
+
+        {/* About */}
+        <section className="pt-20">
+          <FadeIn>
+            <h2 className="font-mono text-sm text-brand-muted">About</h2>
+            <p className="mt-6 font-mono text-sm leading-relaxed text-brand-muted">
+              Product designer with 10+ years of experience building digital
+              products for clients like Uber, Apple, Sony Music and Philips.
+              Focused on MVPs, design systems and behavioral design. Hyper
+              Island alum, Friends of Figma Norway lead, and UX Norge
+              contributor.
+            </p>
+            <Link
+              href="/about"
+              className="mt-4 inline-block font-mono text-sm text-brand-dark underline underline-offset-4 hover:opacity-70 transition-opacity"
+            >
+              Read more
+            </Link>
+          </FadeIn>
+        </section>
+
         {/* Projects */}
         {projects.length > 0 && (
           <section className="pt-20">
@@ -166,49 +183,53 @@ export default async function Home() {
         )}
 
         {/* Now and Then */}
-        {career.length > 0 && (
-          <section className="pt-20">
-            <FadeIn>
-              <h2 className="font-mono text-sm text-brand-muted">Now and Then</h2>
-              <ul className="mt-6 space-y-6">
-                {career.map((role: { company: string; role?: string; year?: string; description?: string; _key: string }) => (
-                  <li key={role._key}>
-                    <div className="flex items-baseline gap-2">
-                      <span className="font-heading font-bold">{role.company}</span>
-                      {role.role && (
-                        <span className="font-mono text-sm text-brand-muted">
-                          · {role.role}
-                        </span>
-                      )}
-                      {role.year && (
-                        <span className="font-mono text-sm text-brand-muted">
-                          · {role.year}
-                        </span>
-                      )}
-                    </div>
-                    {role.description && (
-                      <p className="mt-1 font-mono text-sm text-brand-muted leading-relaxed">
-                        {role.description}
-                      </p>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </FadeIn>
-          </section>
-        )}
+        <section className="pt-20">
+          <FadeIn>
+            <h2 className="font-mono text-sm text-brand-muted">Now and Then</h2>
+            <ul className="mt-6 space-y-4">
+              {[
+                { company: "Agens", role: "Head of Design, Partner", year: "2019–2026" },
+                { company: "Skillbase", role: "Founder & Designer", year: "2018–2022" },
+                { company: "Hyper Island", role: "Digital Media Creative", year: "2016–2018" },
+                { company: "Freelance", role: "UX/UI Designer", year: "2014–2019" },
+              ].map((role) => (
+                <li key={role.company} className="flex items-baseline justify-between gap-4">
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-heading font-bold">{role.company}</span>
+                    <span className="font-mono text-sm text-brand-muted">
+                      · {role.role}
+                    </span>
+                  </div>
+                  <span className="font-mono text-sm text-brand-muted shrink-0">
+                    {role.year}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </FadeIn>
+        </section>
 
         {/* Footer */}
         <footer className="mt-20 pt-8 border-t border-brand-dark/10">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between font-mono text-sm text-brand-muted">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between font-mono text-sm text-brand-muted">
             <p>&copy; {new Date().getFullYear()} Christian Lunde</p>
             <nav className="flex gap-6">
-              <Link href="/journal" className="hover:text-brand-dark transition-colors">
-                Journal
-              </Link>
-              <Link href="/om" className="hover:text-brand-dark transition-colors">
-                About
-              </Link>
+              <a
+                href="https://www.instagram.com/christianlunde/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-brand-dark transition-colors"
+              >
+                Instagram
+              </a>
+              <a
+                href="https://www.linkedin.com/in/chrlunde/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-brand-dark transition-colors"
+              >
+                LinkedIn
+              </a>
             </nav>
           </div>
         </footer>
