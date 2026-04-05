@@ -6,7 +6,10 @@ interface JournalCardProps {
   title: string;
   slug: { current: string };
   excerpt?: string;
-  mainImage?: { asset: { _ref: string }; alt?: string };
+  mainImage?: {
+    asset: { _id: string; metadata?: { lqip?: string } };
+    alt?: string;
+  };
   location?: string;
   publishedAt?: string;
 }
@@ -19,6 +22,8 @@ export function JournalCard({
   location,
   publishedAt,
 }: JournalCardProps) {
+  const lqip = mainImage?.asset?.metadata?.lqip;
+
   return (
     <Link href={`/journal/${slug.current}`} className="group block">
       {mainImage && (
@@ -28,6 +33,9 @@ export function JournalCard({
             alt={mainImage.alt || title}
             width={720}
             height={480}
+            sizes="(max-width: 640px) 100vw, 50vw"
+            placeholder={lqip ? "blur" : "empty"}
+            blurDataURL={lqip}
             className="aspect-[3/2] w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
           />
         </div>

@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
+import { urlFor } from "@/sanity/image";
 
 const components: PortableTextComponents = {
   block: {
@@ -36,6 +38,31 @@ const components: PortableTextComponents = {
         {children}
       </a>
     ),
+  },
+  types: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    image: ({ value }: { value: any }) => {
+      const lqip = value?.asset?.metadata?.lqip;
+      return (
+        <figure className="mt-8 mb-4">
+          <Image
+            src={urlFor(value).width(1200).url()}
+            alt={value.alt || ""}
+            width={1200}
+            height={675}
+            sizes="(max-width: 768px) 100vw, 768px"
+            placeholder={lqip ? "blur" : "empty"}
+            blurDataURL={lqip}
+            className="rounded-xl w-full"
+          />
+          {value.alt && (
+            <figcaption className="mt-2 font-mono text-xs text-brand-muted text-center">
+              {value.alt}
+            </figcaption>
+          )}
+        </figure>
+      );
+    },
   },
 };
 

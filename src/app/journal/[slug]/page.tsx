@@ -71,6 +71,9 @@ export default async function JournalPostPage({ params }: Props) {
             alt={post.mainImage.alt || post.title}
             width={1200}
             height={675}
+            sizes="(max-width: 768px) 100vw, 768px"
+            placeholder={post.mainImage.asset?.metadata?.lqip ? "blur" : "empty"}
+            blurDataURL={post.mainImage.asset?.metadata?.lqip}
             className="mt-8 rounded-xl object-cover w-full"
             priority
           />

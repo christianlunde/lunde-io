@@ -8,7 +8,16 @@ export async function getJournalPosts() {
         title,
         slug,
         excerpt,
-        mainImage,
+        mainImage {
+          ...,
+          asset-> {
+            _id,
+            metadata {
+              lqip,
+              dimensions
+            }
+          }
+        },
         location,
         publishedAt,
         tags
@@ -27,10 +36,31 @@ export async function getJournalPost(slug: string) {
         title,
         slug,
         excerpt,
-        mainImage,
+        mainImage {
+          ...,
+          asset-> {
+            _id,
+            metadata {
+              lqip,
+              dimensions
+            }
+          }
+        },
         location,
         publishedAt,
-        body,
+        body[] {
+          ...,
+          _type == "image" => {
+            ...,
+            asset-> {
+              _id,
+              metadata {
+                lqip,
+                dimensions
+              }
+            }
+          }
+        },
         tags
       }`,
       { slug }
@@ -48,7 +78,16 @@ export async function getAbout() {
         name,
         tagline,
         bio,
-        profileImage,
+        profileImage {
+          ...,
+          asset-> {
+            _id,
+            metadata {
+              lqip,
+              dimensions
+            }
+          }
+        },
         skills,
         career
       }`
