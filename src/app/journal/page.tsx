@@ -29,7 +29,7 @@ export default async function JournalPage() {
         </FadeIn>
       ) : (
         <div className="mt-12 grid gap-10 sm:grid-cols-2">
-          {posts.map((post: { _id: string; title: string; slug: { current: string }; excerpt?: string; mainImage?: { asset: { _ref: string }; alt?: string }; location?: string; publishedAt?: string }, i: number) => (
+          {posts.map((post: { _id: string; title: string; slug: { current: string }; excerpt?: string; mainImage?: { asset: { _id: string; metadata?: { lqip?: string } }; alt?: string }; location?: string; publishedAt?: string }, i: number) => (
             <FadeIn key={post._id} delay={0.1 * i}>
               <JournalCard {...post} />
             </FadeIn>

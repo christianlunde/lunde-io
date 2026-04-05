@@ -25,6 +25,14 @@ export function Header() {
                 Journal
               </Link>
             </li>
+            <li>
+              <Link
+                href="/music"
+                className="underline-offset-4 hover:underline transition-all"
+              >
+                Music
+              </Link>
+            </li>
           </ul>
           <ThemeToggle />
         </div>

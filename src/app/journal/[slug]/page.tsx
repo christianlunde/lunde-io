@@ -6,6 +6,7 @@ import { getJournalPost, getJournalPosts } from "@/sanity/queries";
 import { urlFor } from "@/sanity/image";
 import { PortableTextRenderer } from "@/components/PortableText";
 import { FadeIn } from "@/components/FadeIn";
+import { TravelSoundtrack } from "@/components/TravelSoundtrack";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -100,6 +101,12 @@ export default async function JournalPostPage({ params }: Props) {
               </span>
             ))}
           </div>
+        </FadeIn>
+      )}
+
+      {post.spotifyPlaylistUrl && (
+        <FadeIn delay={0.4}>
+          <TravelSoundtrack url={post.spotifyPlaylistUrl} />
         </FadeIn>
       )}
     </article>

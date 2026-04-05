@@ -73,6 +73,12 @@ export const journal = defineType({
       of: [{ type: "string" }],
       options: { layout: "tags" },
     }),
+    defineField({
+      name: "spotifyPlaylistUrl",
+      title: "Spotify-spilleliste",
+      type: "url",
+      validation: (rule) => rule.uri({ scheme: ["https"] }),
+    }),
   ],
   orderings: [
     {

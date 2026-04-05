@@ -48,6 +48,7 @@ export async function getJournalPost(slug: string) {
         },
         location,
         publishedAt,
+        spotifyPlaylistUrl,
         body[] {
           ...,
           _type == "image" => {

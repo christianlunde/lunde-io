@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FadeIn } from "@/components/FadeIn";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { LocalClock } from "@/components/LocalClock";
 import { getProjects, getJournalPosts, getAbout } from "@/sanity/queries";
 
@@ -210,29 +211,9 @@ export default async function Home() {
         </section>
 
         {/* Footer */}
-        <footer className="mt-20 pt-8 border-t border-brand-dark/10">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between font-mono text-sm text-brand-muted">
-            <p>&copy; {new Date().getFullYear()} Christian Lunde</p>
-            <nav className="flex gap-6">
-              <a
-                href="https://www.instagram.com/christianlunde/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-brand-dark transition-colors"
-              >
-                Instagram
-              </a>
-              <a
-                href="https://www.linkedin.com/in/chrlunde/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-brand-dark transition-colors"
-              >
-                LinkedIn
-              </a>
-            </nav>
-          </div>
-        </footer>
+        <div className="mt-20 pt-8 border-t border-brand-dark/10">
+          <Footer />
+        </div>
       </div>
     </>
   );
