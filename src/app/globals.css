@@ -21,8 +21,13 @@
   --animate-sound-bar-1: sound-bar-1 0.8s ease-in-out infinite;
   --animate-sound-bar-2: sound-bar-2 0.8s ease-in-out infinite 0.2s;
   --animate-sound-bar-3: sound-bar-3 0.8s ease-in-out infinite 0.4s;
+  --animate-fade-in: fade-in 0.2s ease-out;
 }
 
+@keyframes fade-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
 @keyframes sound-bar-1 {
   0%, 100% { height: 4px; }
   50% { height: 14px; }
