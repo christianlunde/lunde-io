@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { TypewriterText } from "./TypewriterText";
 
 interface TrackData {
   title: string;
@@ -70,7 +71,6 @@ export function HeroStatus() {
   const hasCycling = !!cycling;
   const hasActivity = hasMusic || hasCycling;
 
-  // Before mount, show static fallback to avoid hydration mismatch
   if (!mounted) {
     return (
       <p className="mt-5 text-sm leading-relaxed font-mono sm:text-base sm:mt-6">
@@ -103,7 +103,7 @@ export function HeroStatus() {
             rel="noopener noreferrer"
             className="underline underline-offset-4 hover:opacity-70 transition-opacity"
           >
-            {track.title}
+            <TypewriterText text={track.title} />
           </a>
         </>
       )}
