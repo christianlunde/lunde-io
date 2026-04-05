@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { TypewriterText } from "./TypewriterText";
 
 interface TrackData {
   title: string;
@@ -96,7 +97,7 @@ export function NowPlaying() {
             rel="noopener noreferrer"
             className="underline underline-offset-4 hover:text-brand-dark transition-colors"
           >
-            {track.title}
+            <TypewriterText text={track.title} />
           </a>
         </>
       )}
