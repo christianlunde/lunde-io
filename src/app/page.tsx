@@ -3,6 +3,7 @@ import { FadeIn } from "@/components/FadeIn";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { LocalClock } from "@/components/LocalClock";
+import { HeroStatus } from "@/components/HeroStatus";
 import { getProjects, getJournalPosts, getAbout } from "@/sanity/queries";
 
 export default async function Home() {
@@ -31,20 +32,7 @@ export default async function Home() {
               <br />
               thoughtful digital products.
             </h1>
-            <p className="mt-5 text-sm leading-relaxed font-mono sm:text-base sm:mt-6">
-              Currently exploring what&rsquo;s next.
-              <br />
-              Previously Head of Design at{" "}
-              <a
-                href="https://agens.no"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-4 hover:opacity-70 transition-opacity"
-              >
-                Agens
-              </a>
-              .
-            </p>
+            <HeroStatus />
           </div>
         </FadeIn>
 
