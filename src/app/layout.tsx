@@ -16,9 +16,10 @@ const spaceMono = Space_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Christian Lunde",
-    template: "%s | Christian Lunde",
+    default: "Christian Lunde · Designer",
+    template: "%s · Christian Lunde",
   },
+  icons: { icon: [] },
   description: "Product designer building thoughtful digital products.",
 };
 
