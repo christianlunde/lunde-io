@@ -24,4 +24,9 @@ jobs:
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }} ${{ github.ref_name == 'main' && '--prod' || '' }}
 
       - name: Deploy
+        env:
+          GIT_AUTHOR_NAME: ''
+          GIT_AUTHOR_EMAIL: ''
+          GIT_COMMITTER_NAME: ''
+          GIT_COMMITTER_EMAIL: ''
         run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} ${{ github.ref_name == 'main' && '--prod' || '' }}
