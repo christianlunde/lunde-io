@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { TypewriterText } from "./TypewriterText";
 import { AlbumHover } from "./AlbumHover";
 
@@ -8,10 +8,6 @@ interface TrackData {
   title: string;
   songUrl: string;
   albumArt: string;
-}
-
-interface CyclingData {
-  km: number;
 }
 
 interface NowPlayingResponse {
@@ -25,12 +21,61 @@ interface WeeklyResponse {
   km: number;
 }
 
+function buildSuffix(
+  track: TrackData | null,
+  km: number | null
+): { text: string; rich: ReactNode } {
+  const hasMusic = !!track;
+  const hasCycling = km !== null && km > 0;
+
+  if (hasMusic && hasCycling) {
+    return {
+      text: ` on my bike (${km} km this week) while listening to ${track!.title}.`,
+      rich: (
+        <>
+          {" "}on my bike ({km} km this week) while listening to{" "}
+          <AlbumHover albumArt={track!.albumArt} songUrl={track!.songUrl}>
+            {track!.title}
+          </AlbumHover>
+          .
+        </>
+      ),
+    };
+  }
+  if (hasMusic) {
+    return {
+      text: ` while listening to ${track!.title}.`,
+      rich: (
+        <>
+          {" "}while listening to{" "}
+          <AlbumHover albumArt={track!.albumArt} songUrl={track!.songUrl}>
+            {track!.title}
+          </AlbumHover>
+          .
+        </>
+      ),
+    };
+  }
+  if (hasCycling) {
+    return {
+      text: ` on my bike (${km} km this week).`,
+      rich: <> on my bike ({km} km this week).</>,
+    };
+  }
+  return {
+    text: `.`,
+    rich: <>.</>,
+  };
+}
+
 export function NowPlaying() {
   const [track, setTrack] = useState<TrackData | null>(null);
-  const [cycling, setCycling] = useState<CyclingData | null>(null);
+  const [cycling, setCycling] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     let active = true;
+    setMounted(true);
 
     async function fetchTrack() {
       try {
@@ -55,7 +100,7 @@ export function NowPlaying() {
         if (!res.ok) return;
         const data: WeeklyResponse = await res.json();
         if (active && data.km > 0) {
-          setCycling({ km: data.km });
+          setCycling(data.km);
         }
       } catch {
         // Non-critical
@@ -64,7 +109,7 @@ export function NowPlaying() {
 
     fetchTrack();
     fetchCycling();
-    const interval = setInterval(fetchTrack, 30_000);
+    const interval = setInterval(fetchTrack, 10_000);
 
     return () => {
       active = false;
@@ -72,10 +117,7 @@ export function NowPlaying() {
     };
   }, []);
 
-  const hasMusic = !!track;
-  const hasCycling = !!cycling;
-
-  if (!hasMusic && !hasCycling) {
+  if (!mounted) {
     return (
       <p className="font-mono text-sm font-bold tracking-wide text-brand-muted text-center">
         Currently exploring what&apos;s next.
@@ -83,23 +125,12 @@ export function NowPlaying() {
     );
   }
 
+  const { text: suffixText, rich: suffixRich } = buildSuffix(track, cycling);
+
   return (
-    <p className="font-mono text-sm font-bold tracking-wide text-brand-muted text-center">
+    <p className="font-mono text-sm font-bold tracking-wide text-brand-muted text-center whitespace-pre-line">
       Currently exploring what&apos;s next
-      {hasCycling && (
-        <>
-          {" "}on my bike ({cycling.km} km this week)
-        </>
-      )}
-      {hasMusic && (
-        <>
-          {" "}while listening to{" "}
-          <AlbumHover albumArt={track.albumArt} songUrl={track.songUrl}>
-            <TypewriterText text={track.title} />
-          </AlbumHover>
-        </>
-      )}
-      .
+      <TypewriterText text={suffixText}>{suffixRich}</TypewriterText>
     </p>
   );
 }

@@ -1,54 +1,80 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 interface Props {
   text: string;
   speed?: number;
+  /** Rich JSX shown instead of plain text once animation settles */
+  children?: ReactNode;
 }
 
-export function TypewriterText({ text, speed = 50 }: Props) {
+export function TypewriterText({ text, speed = 50, children }: Props) {
   const [display, setDisplay] = useState(text);
-  const prevText = useRef(text);
-  const animating = useRef(false);
+  const [stable, setStable] = useState(true);
+
+  const displayRef = useRef(text);
+  const targetRef = useRef(text);
+  const animatingRef = useRef(false);
+  const cancelRef = useRef<() => void>(() => {});
 
   useEffect(() => {
-    if (text === prevText.current || animating.current) return;
+    targetRef.current = text;
 
-    const old = prevText.current;
-    prevText.current = text;
-    animating.current = true;
+    if (text === displayRef.current) {
+      if (!animatingRef.current) setStable(true);
+      return;
+    }
+    if (animatingRef.current) return; // queued — picked up when current finishes
 
-    let i = old.length;
+    startAnimation(displayRef.current, text);
 
-    // Erase old text
-    const eraseInterval = setInterval(() => {
-      if (i <= 0) {
-        clearInterval(eraseInterval);
+    function startAnimation(from: string, to: string) {
+      let cancelled = false;
+      animatingRef.current = true;
+      setStable(false);
 
-        // Type new text
-        let j = 0;
-        const typeInterval = setInterval(() => {
-          if (j > text.length) {
-            clearInterval(typeInterval);
-            animating.current = false;
-            return;
-          }
-          setDisplay(text.substring(0, j));
-          j++;
-        }, speed);
+      cancelRef.current = () => {
+        cancelled = true;
+        animatingRef.current = false;
+      };
 
-        return;
+      let i = from.length;
+
+      function erase() {
+        if (cancelled) return;
+        if (i > 0) {
+          displayRef.current = from.substring(0, --i);
+          setDisplay(displayRef.current);
+          setTimeout(erase, speed);
+        } else {
+          typeChar(0);
+        }
       }
-      i--;
-      setDisplay(old.substring(0, i));
-    }, speed);
 
-    return () => {
-      clearInterval(eraseInterval);
-      animating.current = false;
-    };
+      function typeChar(j: number) {
+        if (cancelled) return;
+        displayRef.current = to.substring(0, j);
+        setDisplay(displayRef.current);
+        if (j < to.length) {
+          setTimeout(() => typeChar(j + 1), speed);
+        } else {
+          animatingRef.current = false;
+          const pending = targetRef.current;
+          if (pending !== to) {
+            startAnimation(to, pending);
+          } else {
+            setStable(true);
+          }
+        }
+      }
+
+      erase();
+    }
+
+    return () => cancelRef.current();
   }, [text, speed]);
 
+  if (stable && children !== undefined) return <>{children}</>;
   return <>{display}</>;
 }
