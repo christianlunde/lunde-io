@@ -37,6 +37,26 @@ export const about = defineType({
       options: { layout: "tags" },
     }),
     defineField({
+      name: "currentLocation",
+      title: "Nåværende sted",
+      type: "object",
+      description: "Vises på forsiden som «Oslo, 14:32». Tidssone-felt bruker IANA-format, f.eks. «Europe/Oslo», «Asia/Seoul», «Asia/Tokyo».",
+      fields: [
+        defineField({
+          name: "city",
+          title: "Bynavn",
+          type: "string",
+          description: "Visningsnavn, f.eks. «Lisbon» eller «Seoul»",
+        }),
+        defineField({
+          name: "timezone",
+          title: "Tidssone",
+          type: "string",
+          description: "IANA-tidssone, f.eks. «Europe/Lisbon» eller «Asia/Seoul»",
+        }),
+      ],
+    }),
+    defineField({
       name: "career",
       title: "Karriere",
       type: "array",

@@ -8,7 +8,16 @@ export async function getJournalPosts() {
         title,
         slug,
         excerpt,
-        mainImage,
+        mainImage {
+          ...,
+          asset-> {
+            _id,
+            metadata {
+              lqip,
+              dimensions
+            }
+          }
+        },
         location,
         publishedAt,
         tags
@@ -27,10 +36,32 @@ export async function getJournalPost(slug: string) {
         title,
         slug,
         excerpt,
-        mainImage,
+        mainImage {
+          ...,
+          asset-> {
+            _id,
+            metadata {
+              lqip,
+              dimensions
+            }
+          }
+        },
         location,
         publishedAt,
-        body,
+        spotifyPlaylistUrl,
+        body[] {
+          ...,
+          _type == "image" => {
+            ...,
+            asset-> {
+              _id,
+              metadata {
+                lqip,
+                dimensions
+              }
+            }
+          }
+        },
         tags
       }`,
       { slug }
@@ -48,8 +79,18 @@ export async function getAbout() {
         name,
         tagline,
         bio,
-        profileImage,
+        profileImage {
+          ...,
+          asset-> {
+            _id,
+            metadata {
+              lqip,
+              dimensions
+            }
+          }
+        },
         skills,
+        currentLocation,
         career
       }`
     );
@@ -70,5 +111,80 @@ export async function getProjects() {
     );
   } catch {
     return [];
+  }
+}
+
+export async function getDestinations() {
+  try {
+    return await client.fetch(
+      `*[_type == "destination"] | order(title asc) {
+        _id,
+        title,
+        slug,
+        country,
+        excerpt,
+        coverImage {
+          ...,
+          asset-> {
+            _id,
+            metadata {
+              lqip,
+              dimensions
+            }
+          }
+        },
+        "placeCount": count(places)
+      }`
+    );
+  } catch {
+    return [];
+  }
+}
+
+export async function getDestination(slug: string) {
+  try {
+    return await client.fetch(
+      `*[_type == "destination" && slug.current == $slug][0] {
+        _id,
+        title,
+        slug,
+        country,
+        excerpt,
+        mapCenter,
+        coverImage {
+          ...,
+          asset-> {
+            _id,
+            metadata {
+              lqip,
+              dimensions
+            }
+          }
+        },
+        places[] {
+          _key,
+          title,
+          category,
+          description,
+          address,
+          googleMapsUrl,
+          coordinates,
+          publishedAt,
+          image {
+            ...,
+            asset-> {
+              _id,
+              metadata {
+                lqip,
+                dimensions
+              }
+            }
+          }
+        }
+      }`,
+      { slug }
+    );
+  } catch {
+    return null;
   }
 }

@@ -2,12 +2,17 @@
 
 import { useEffect, useState } from "react";
 
-export function LocalClock() {
+interface LocalClockProps {
+  city?: string;
+  timezone?: string;
+}
+
+export function LocalClock({ city: cityProp, timezone: timezoneProp }: LocalClockProps) {
   const [info, setInfo] = useState<{ city: string; time: string } | null>(null);
 
   useEffect(() => {
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const city = timezone.split("/").pop()?.replace(/_/g, " ") || "";
+    const timezone = timezoneProp || Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const city = cityProp || timezone.split("/").pop()?.replace(/_/g, " ") || "";
 
     function getTime() {
       return new Intl.DateTimeFormat("en-US", {
@@ -25,7 +30,7 @@ export function LocalClock() {
     }, 30_000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [cityProp, timezoneProp]);
 
   if (!info) return null;
 
