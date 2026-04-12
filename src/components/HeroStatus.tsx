@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { TypewriterText } from "./TypewriterText";
 import { AlbumHover } from "./AlbumHover";
 
@@ -19,6 +19,69 @@ interface NowPlayingResponse {
 
 interface WeeklyResponse {
   km: number;
+}
+
+const agensLink = (
+  <a
+    href="https://agens.no"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="underline underline-offset-4 hover:opacity-70 transition-opacity"
+  >
+    Agens
+  </a>
+);
+
+function buildSuffix(
+  track: TrackData | null,
+  km: number | null
+): { text: string; rich: ReactNode } {
+  const hasMusic = !!track;
+  const hasCycling = km !== null && km > 0;
+
+  if (hasMusic && hasCycling) {
+    return {
+      text: ` on my bike (${km} km this week) while listening to ${track!.title}.`,
+      rich: (
+        <>
+          {" "}on my bike ({km} km this week) while listening to{" "}
+          <AlbumHover albumArt={track!.albumArt} songUrl={track!.songUrl}>
+            {track!.title}
+          </AlbumHover>
+          .
+        </>
+      ),
+    };
+  }
+  if (hasMusic) {
+    return {
+      text: ` while listening to ${track!.title}.`,
+      rich: (
+        <>
+          {" "}while listening to{" "}
+          <AlbumHover albumArt={track!.albumArt} songUrl={track!.songUrl}>
+            {track!.title}
+          </AlbumHover>
+          .
+        </>
+      ),
+    };
+  }
+  if (hasCycling) {
+    return {
+      text: ` on my bike (${km} km this week).`,
+      rich: <> on my bike ({km} km this week).</>,
+    };
+  }
+  return {
+    text: `.\nPreviously Head of Design at Agens.`,
+    rich: (
+      <>
+        .<br />
+        Previously Head of Design at {agensLink}.
+      </>
+    ),
+  };
 }
 
 export function HeroStatus() {
@@ -66,7 +129,7 @@ export function HeroStatus() {
 
     fetchTrack();
     fetchCycling();
-    const interval = setInterval(fetchTrack, 30_000);
+    const interval = setInterval(fetchTrack, 10_000);
 
     return () => {
       active = false;
@@ -74,57 +137,21 @@ export function HeroStatus() {
     };
   }, []);
 
-  const hasMusic = !!track;
-  const hasCycling = !!cycling;
-  const hasActivity = hasMusic || hasCycling;
-
   if (!mounted) {
     return (
       <p className="mt-5 text-sm leading-relaxed font-mono sm:text-base sm:mt-6">
-        Currently exploring what&apos;s next.
-        <br />
-        Previously Head of Design at{" "}
-        <a
-          href="https://agens.no"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline underline-offset-4 hover:opacity-70 transition-opacity"
-        >
-          Agens
-        </a>
-        .
+        Currently exploring what&apos;s next.<br />
+        Previously Head of Design at {agensLink}.
       </p>
     );
   }
 
+  const { text: suffixText, rich: suffixRich } = buildSuffix(track, cycling);
+
   return (
-    <p className="mt-5 text-sm leading-relaxed font-mono sm:text-base sm:mt-6">
+    <p className="mt-5 text-sm leading-relaxed font-mono sm:text-base sm:mt-6 whitespace-pre-line">
       Currently exploring what&apos;s next
-      {hasCycling && <> on my bike ({cycling} km this week)</>}
-      {hasMusic && (
-        <>
-          {" "}while listening to{" "}
-          <AlbumHover albumArt={track.albumArt} songUrl={track.songUrl}>
-            <TypewriterText text={track.title} />
-          </AlbumHover>
-        </>
-      )}
-      .
-      {!hasActivity && (
-        <>
-          <br />
-          Previously Head of Design at{" "}
-          <a
-            href="https://agens.no"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-4 hover:opacity-70 transition-opacity"
-          >
-            Agens
-          </a>
-          .
-        </>
-      )}
+      <TypewriterText text={suffixText}>{suffixRich}</TypewriterText>
     </p>
   );
 }

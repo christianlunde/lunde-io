@@ -39,7 +39,10 @@ export default async function Home() {
         <FadeIn delay={0.2}>
           <div className="flex items-center justify-between pb-2">
             <div className="text-sm font-mono">
-              <LocalClock />
+              <LocalClock
+                city={about?.currentLocation?.city}
+                timezone={about?.currentLocation?.timezone}
+              />
             </div>
           </div>
         </FadeIn>

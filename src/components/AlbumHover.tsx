@@ -10,7 +10,7 @@ interface Props {
 }
 
 export function AlbumHover({ albumArt, songUrl, children }: Props) {
-  const [show, setShow] = useState(false);
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
 
   if (!albumArt) {
     return (
@@ -26,21 +26,22 @@ export function AlbumHover({ albumArt, songUrl, children }: Props) {
   }
 
   return (
-    <span
-      className="relative inline-block"
-      onMouseEnter={() => setShow(true)}
-      onMouseLeave={() => setShow(false)}
-    >
+    <>
       <a
         href={songUrl}
         target="_blank"
         rel="noopener noreferrer"
         className="underline underline-offset-4 hover:opacity-70 transition-opacity"
+        onMouseMove={(e) => setPos({ x: e.clientX, y: e.clientY })}
+        onMouseLeave={() => setPos(null)}
       >
         {children}
       </a>
-      {show && (
-        <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-3 pointer-events-none animate-fade-in">
+      {pos && (
+        <span
+          className="fixed pointer-events-none z-50 hidden sm:block"
+          style={{ left: pos.x - 60, top: pos.y - 148 }}
+        >
           <Image
             src={albumArt}
             alt=""
@@ -51,6 +52,6 @@ export function AlbumHover({ albumArt, songUrl, children }: Props) {
           />
         </span>
       )}
-    </span>
+    </>
   );
 }

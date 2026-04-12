@@ -33,6 +33,14 @@ export function Header() {
                 Music
               </Link>
             </li>
+            <li>
+              <Link
+                href="/places"
+                className="underline-offset-4 hover:underline transition-all"
+              >
+                Places
+              </Link>
+            </li>
           </ul>
           <ThemeToggle />
         </div>
