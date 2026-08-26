@@ -206,18 +206,31 @@ haster mest. Ingenting av dette er fikset ennå.
 
 ### Strava-detaljer funnet 26. august 2026
 
-- [ ] **`activities[0]` er ukas ELDSTE tur, ikke den nyeste.** Strava returnerer
-      stigende datorekkefølge når `after=` brukes (verifisert). I
-      `src/app/api/strava/weekly/route.ts` står kommentaren «Get location from
-      the most recent ride» over `stats.activities[0]` — så med to eller flere
-      turer på en uke viser siden byen fra den eldste. Fiks:
-      `stats.activities[stats.activities.length - 1]`. Usynlig akkurat nå
-      (0 turer denne uka).
-- [ ] **`getRecentActivity()` i `src/lib/strava.ts` er død kode** — eksportert,
-      aldri importert. Denne dokumentasjonen har tidligere påstått at det finnes
-      «fallback til siste tur»; det stemmer ikke. Uten turer inneværende uke
-      forsvinner sykkeldelen av statusteksten helt (`HeroStatus` krever
-      `data.km > 0`). Enten koble opp fallbacken eller slett funksjonen.
+Om `city`/`country` i `/api/strava/weekly`: **Strava fyller dem ikke lenger ut.**
+Verifisert på 14 aktiviteter — `location_city`, `location_state` og
+`location_country` er `null` på alle. Ruten returnerer altså to felter som
+alltid er tomme, og ingen synlig del av siden viser et bynavn fra Strava.
+(Bynavnet på forsiden kommer fra `LocalClock`, som leser
+`about.currentLocation` i Sanity — en helt annen kilde.)
+
+- [ ] **Død kode rundt sykkeldelen.** Tre ting henger igjen fra før
+      «Combine now playing and cycling into one status line»:
+      `WeeklyCycling.tsx` (komponenten som faktisk leste `city`/`country` — ikke
+      importert noe sted), `getRecentActivity()` i `src/lib/strava.ts`
+      (eksportert, aldri brukt), og `city`/`country` i selve ruten.
+      Det som er i bruk er `HeroStatus`, som typer responsen som `{ km: number }`
+      og ignorerer resten. Rydd opp, eller koble `WeeklyCycling` opp igjen
+      bevisst.
+      Merk: denne dokumentasjonen har tidligere påstått at det finnes «fallback
+      til siste tur». Det stemmer ikke — uten turer inneværende uke forsvinner
+      sykkeldelen av statusteksten helt (`HeroStatus` krever `data.km > 0`).
+- [ ] **`activities[0]` er ukas eldste tur, ikke den nyeste.** Strava returnerer
+      stigende datorekkefølge når `after=` brukes (verifisert). Kommentaren
+      «Get location from the most recent ride» i
+      `src/app/api/strava/weekly/route.ts` beskriver altså ikke det koden gjør.
+      **Uten praktisk konsekvens** så lenge `location_*` alltid er `null` og
+      ingen komponent leser feltene — men koden og kommentaren bør stemme
+      overens hvis noen senere gjør noe med den nyeste turen.
 
 ### Kvalitet
 
