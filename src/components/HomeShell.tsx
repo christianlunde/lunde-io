@@ -137,7 +137,7 @@ export function HomeShell() {
         y={0}
         duration={0.9}
         style={inkOverSky}
-        className="relative grid grid-cols-3 items-start font-mono text-xs text-brand-muted"
+        className="typo-chrome relative grid grid-cols-3 items-start font-mono text-xs font-bold text-brand-muted"
       >
         <WeatherPlace />
         <a
@@ -157,7 +157,7 @@ export function HomeShell() {
           the top bar — measured ~7:1 against the sky pixels, no shadow */}
       <div
         style={inkOverSky}
-        className="relative flex flex-1 items-start justify-center pt-[13dvh] sm:pt-[15dvh]"
+        className="typo-center relative flex flex-1 items-start justify-center pt-[13dvh] sm:pt-[15dvh]"
       >
         <FadeIn play={heroReady} delay={0.25} y={10} duration={0.9}>
           <NowPlaying onStableChange={setTypeStable} />

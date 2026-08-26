@@ -119,7 +119,7 @@ export function NowPlaying({ onStableChange }: { onStableChange?: (stable: boole
 
   if (!mounted) {
     return (
-      <p className="font-mono text-sm font-bold tracking-wide text-brand-muted text-center">
+      <p className="font-mono text-sm tracking-wide text-brand-muted text-center">
         Currently exploring what&apos;s next.
       </p>
     );
@@ -128,7 +128,7 @@ export function NowPlaying({ onStableChange }: { onStableChange?: (stable: boole
   const { text: suffixText, rich: suffixRich } = buildSuffix(track, cycling);
 
   return (
-    <p className="font-mono text-sm font-bold tracking-wide text-brand-muted text-center whitespace-pre-line">
+    <p className="font-mono text-sm tracking-wide text-brand-muted text-center whitespace-pre-line">
       Currently exploring what&apos;s next
       <TypewriterText text={suffixText} onStableChange={onStableChange}>{suffixRich}</TypewriterText>
     </p>
