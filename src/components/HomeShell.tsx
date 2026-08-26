@@ -160,7 +160,7 @@ export function HomeShell() {
         style={inkOverSky}
         className="relative flex flex-1 items-start justify-center pt-[13dvh] sm:pt-[15dvh]"
       >
-        <FadeIn play={heroReady} delay={0.25} y={10} duration={0.9}>
+        <FadeIn play={heroReady} delay={0.25} y={0} duration={1.1}>
           <NowPlaying onStableChange={setTypeStable} />
         </FadeIn>
       </div>
