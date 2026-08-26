@@ -145,6 +145,40 @@ Siste deploy 12. april 2026 for begge brancher.
 Kartlagt 26. august 2026 ved gjennomgang av stacken. Sortert etter hva som
 haster mest. Ingenting av dette er fikset ennå.
 
+### Ødelagt nå
+
+- [ ] **Strava-integrasjonen er død — appen er satt til «Inactive» av Strava.**
+      Bekreftet 26. august 2026: token-refresh svarer `200 OK`, men
+      `/athlete/activities` svarer `403 Forbidden` med
+      `{"resource":"Application","field":"Status","code":"Inactive"}`.
+      Nøkler og scope (`activity:read_all read`) er intakte — det er selve
+      API-appen som er deaktivert.
+      **Årsak:** Stravas API-endringer (epost 1. juni 2026) krever Strava-
+      abonnement for eksisterende Standard Tier-utviklere fra **30. juni 2026**.
+      Den fristen gikk ut for ~8 uker siden.
+      **Fiks:** krever en beslutning fra Christian — tegne Strava-abonnement
+      (eposten nevner 3 måneder gratis for aktive utviklere), søke Extended
+      Access Tier, eller fjerne sykkeldelen av statusteksten.
+      Sjekk status i Stravas API settings dashboard.
+      Konsekvens i mellomtiden: `HeroStatus`/`NowPlaying` faller stille tilbake
+      til «Previously Head of Design at Agens.» — siden ser riktig ut, og
+      ingenting varsler om at halve funksjonen er borte. Dette er
+      skoleeksempelet på den stille feilhåndteringen under.
+
+### Kommer (Strava, 1. juni 2027)
+
+- [ ] **Base-URL endres** fra `https://www.strava.com/api/v3` til
+      `https://www.api-v3.strava.com` — én linje i `src/lib/strava.ts`
+      (`API_BASE`). Kan **ikke** byttes ennå: den nye verten svarer ikke på DNS
+      per august 2026. Må gjøres før juni 2027.
+- [ ] `oauth/deauthorize` pensjoneres til fordel for `oauth/revoke` — vi bruker
+      ingen av dem, så ingen endring.
+- Allerede i orden: autorisasjonstokens sendes i header (`Authorization: Bearer`),
+      ikke som form-params. `TOKEN_URL` er ikke omfattet av URL-endringen.
+- Ikke relevant: Club- og Segments Explore-endepunktene (deprekeres 1. sept 2026)
+      brukes ikke — vi kaller kun `/athlete/activities`. Restriksjonen mot
+      tredjeparts mellomledd gjelder ikke; dette er en direkte integrasjon.
+
 ### Blokkerer full lansering
 
 - [ ] **Ingen revalidering — CMS-innholdet er fryst ved build.** `/`, `/about`,
@@ -187,8 +221,12 @@ haster mest. Ingenting av dette er fikset ennå.
 - [ ] **Alt feiler stille.** Hver Sanity-spørring er `try { … } catch { return [] }`
       og hver Spotify-funksjon `catch { return { isPlaying: false } }`. En
       feilkonfigurert miljøvariabel gir tom side i stedet for feil, uten varsling.
-      Spesielt: `data.refresh_token` leses aldri ved token-refresh, så hvis
-      Spotify roterer token dør integrasjonen lydløst.
+      Spesielt: `data.refresh_token` leses aldri ved token-refresh. Verifisert
+      26. august 2026 at Strava returnerer samme token som før, så dette er en
+      latent risiko, ikke et aktivt problem — men det gjelder begge
+      integrasjonene hvis leverandøren begynner å rotere.
+      Strava-utfallet over sto udetektert i ~8 uker nettopp fordi ingenting
+      varsler.
 - [ ] **`FadeIn` animerer fra `opacity: 0`.** Et element på eksakt 0 males
       aldri, så Lighthouse belaster hele faden som LCP render delay.
       `0.01` er visuelt identisk. (Dokumentert i `open-base`-changeloggen.)
