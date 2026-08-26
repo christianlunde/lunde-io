@@ -187,10 +187,9 @@ haster mest. Ingenting av dette er fikset ennå.
 
 ### Ligger live på lunde.io nå
 
-- [ ] **`/api/spotify/callback` er fortsatt deployet på `main`.** Rutens egen
-      kommentar sier «save this to env vars, then remove this route». Den ble
-      fjernet på `preview`, men aldri på `main`. Begrenset reell risiko (den
-      ville echoet innsenderens egen token, ikke Christians), men den skal bort.
+- [x] ~~`/api/spotify/callback` deployet på `main`~~ — **slettet 27. august
+      2026.** (Var engangs OAuth-stillas; fjernet på `preview` i april, glemt
+      på `main`.)
 - [ ] **`/about`, `/journal` og `/studio` svarer 200 på lunde.io.** `main`
       byttet bare ut forsiden — de andre rutene er offentlige, bare ulenket.
       Ta stilling til om de skal `noindex`-es fram til lansering.
@@ -253,11 +252,13 @@ alltid er tomme, og ingen synlig del av siden viser et bynavn fra Strava.
 - [ ] **`FadeIn` animerer fra `opacity: 0`.** Et element på eksakt 0 males
       aldri, så Lighthouse belaster hele faden som LCP render delay.
       `0.01` er visuelt identisk. (Dokumentert i `open-base`-changeloggen.)
-- [ ] **Mangler infrastrukturlaget** familien ellers har: `vercel.json` med
-      sikkerhetsheadere, `og.png` (delinger blir bare tekst), favicon,
-      `robots.txt`, `sitemap.xml`, `llms.txt`. CSP-en må skrives for hånd her —
-      malens `default-src 'self'` er for stram for Sanity CDN, `i.scdn.co` og
-      embedded Studio.
+- [ ] **Infrastrukturlaget, delvis på plass 27. august 2026:** favicon ✓,
+      og-image ✓ (filkonvensjon), basisheadere ✓ (nosniff, Referrer-Policy,
+      Permissions-Policy, X-Frame-Options — i `next.config.ts`, ikke
+      vercel.json, så de virker også i dev). Gjenstår: `robots.txt`,
+      `sitemap.xml`, `llms.txt`, og **CSP som egen gjennomtenkt jobb** —
+      Next inline-er scripts og embedded Studio trenger eval/blob/websockets,
+      så en hastig CSP knekker `/studio` stille. Kjør report-only først.
 
 ## Drift
 
