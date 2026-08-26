@@ -145,25 +145,20 @@ Siste deploy 12. april 2026 for begge brancher.
 Kartlagt 26. august 2026 ved gjennomgang av stacken. Sortert etter hva som
 haster mest. Ingenting av dette er fikset ennå.
 
-### Ødelagt nå
+### Løst
 
-- [ ] **Strava-integrasjonen er død — appen er satt til «Inactive» av Strava.**
-      Bekreftet 26. august 2026: token-refresh svarer `200 OK`, men
-      `/athlete/activities` svarer `403 Forbidden` med
-      `{"resource":"Application","field":"Status","code":"Inactive"}`.
-      Nøkler og scope (`activity:read_all read`) er intakte — det er selve
-      API-appen som er deaktivert.
-      **Årsak:** Stravas API-endringer (epost 1. juni 2026) krever Strava-
-      abonnement for eksisterende Standard Tier-utviklere fra **30. juni 2026**.
-      Den fristen gikk ut for ~8 uker siden.
-      **Fiks:** krever en beslutning fra Christian — tegne Strava-abonnement
-      (eposten nevner 3 måneder gratis for aktive utviklere), søke Extended
-      Access Tier, eller fjerne sykkeldelen av statusteksten.
-      Sjekk status i Stravas API settings dashboard.
-      Konsekvens i mellomtiden: `HeroStatus`/`NowPlaying` faller stille tilbake
-      til «Previously Head of Design at Agens.» — siden ser riktig ut, og
-      ingenting varsler om at halve funksjonen er borte. Dette er
-      skoleeksempelet på den stille feilhåndteringen under.
+- [x] **Strava-appen var deaktivert av Strava** (oppdaget og løst 26. august 2026).
+      `/athlete/activities` svarte `403 Forbidden` med
+      `{"resource":"Application","field":"Status","code":"Inactive"}` mens
+      token-refresh svarte `200 OK` — altså intakte nøkler, deaktivert app.
+      Årsak: Stravas krav om abonnement for eksisterende Standard Tier-utviklere
+      fra 30. juni 2026. Christian tegnet abonnement (3 måneder), og API-et
+      svarte `200 OK` umiddelbart etterpå.
+      **Utløper rundt 26. november 2026** — uten fornyelse settes appen
+      etter alt å dømme «Inactive» igjen, og da faller sykkeltallene stille bort
+      på nytt. Sett en påminnelse.
+      Sto ubemerket i ~8 uker fordi `{"km":0}` er umulig å skille fra
+      «ingen turer denne uka» utenfra.
 
 ### Kommer (Strava, 1. juni 2027)
 
@@ -208,6 +203,21 @@ haster mest. Ingenting av dette er fikset ennå.
 - [ ] `react-feather` er inne for to ikoner (`Sun`, `Moon`)
 - [ ] `motion` er inne for én fade — `FadeIn.tsx` kunne vært CSS
 - [ ] Ingen `engines`/`.nvmrc` (Vercel kjører 24.x)
+
+### Strava-detaljer funnet 26. august 2026
+
+- [ ] **`activities[0]` er ukas ELDSTE tur, ikke den nyeste.** Strava returnerer
+      stigende datorekkefølge når `after=` brukes (verifisert). I
+      `src/app/api/strava/weekly/route.ts` står kommentaren «Get location from
+      the most recent ride» over `stats.activities[0]` — så med to eller flere
+      turer på en uke viser siden byen fra den eldste. Fiks:
+      `stats.activities[stats.activities.length - 1]`. Usynlig akkurat nå
+      (0 turer denne uka).
+- [ ] **`getRecentActivity()` i `src/lib/strava.ts` er død kode** — eksportert,
+      aldri importert. Denne dokumentasjonen har tidligere påstått at det finnes
+      «fallback til siste tur»; det stemmer ikke. Uten turer inneværende uke
+      forsvinner sykkeldelen av statusteksten helt (`HeroStatus` krever
+      `data.km > 0`). Enten koble opp fallbacken eller slett funksjonen.
 
 ### Kvalitet
 
