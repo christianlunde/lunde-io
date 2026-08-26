@@ -21,7 +21,6 @@ export const metadata: Metadata = {
     default: "Christian Lunde · Designer",
     template: "%s · Christian Lunde",
   },
-  icons: { icon: [] },
   description: "Product designer building thoughtful digital products.",
 };
 
