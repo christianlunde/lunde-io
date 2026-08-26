@@ -53,7 +53,10 @@ chat log — if something is worth remembering next session, write it down here.
 - Visual style matches lunde.io (Figma Sites version)
 - Background: `#7DBCFF` (light), `#00162E` (dark)
 - Text: `#00162E` (light), `#C5DFFF` (dark)
-- Fonts: Space Grotesk (headings), Space Mono (body/mono)
+- Fonts: **Geist** (headings), **Geist Mono** (body/mono). Chosen 2026-08-27,
+  deliberately diverging from the Figma Sites original's Space Grotesk /
+  Space Mono: Geist is tighter and more neutral, and it matches the `open-*`
+  tool family, so the personal site and the tools it links to share one voice.
 - Minimal, typography-driven design — no unnecessary decoration
 - Full-viewport hero on homepage, content sections below
 - Entrance animations start at `opacity: 0.01`, never `0` — an element at

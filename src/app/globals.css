@@ -16,8 +16,8 @@
   --color-brand: var(--brand-bg);
   --color-brand-dark: var(--brand-dark);
   --color-brand-muted: var(--brand-muted);
-  --font-heading: var(--font-space-grotesk);
-  --font-mono: var(--font-space-mono);
+  --font-heading: var(--font-geist);
+  --font-mono: var(--font-geist-mono);
   --animate-fade-in: fade-in 0.2s ease-out;
 }
 
@@ -36,3 +36,4 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading), sans-serif;
 }
+
