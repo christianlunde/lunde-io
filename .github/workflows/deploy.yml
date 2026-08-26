@@ -39,7 +39,7 @@ jobs:
             const html = await (await fetch(ORIGIN)).text();
             const urls = [...new Set(
               [...html.matchAll(/\/_next\/image\?[^"\s,]+/g)]
-                .map((m) => m[0].replaceAll("&amp;", "&"))
+                .map((m) => m[0].replaceAll("&amp;", "&").replaceAll("\\u0026", "&"))
             )];
             urls.push("/opengraph-image.jpg");
             console.log(`warming ${urls.length} image URLs`);
