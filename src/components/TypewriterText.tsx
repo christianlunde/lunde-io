@@ -30,6 +30,7 @@ function sharedSuffix(a: string, b: string, skip: number): number {
 export function TypewriterText({ text, speed = 50, children, onStableChange }: Props) {
   const [display, setDisplay] = useState(text);
   const [stable, setStable] = useState(true);
+  const [phase, setPhase] = useState<"idle" | "erasing" | "typing">("idle");
 
   const displayRef = useRef(text);
   const targetRef = useRef(text);
@@ -80,27 +81,36 @@ export function TypewriterText({ text, speed = 50, children, onStableChange }: P
 
       let i = fromMiddle.length;
 
+      // Erasing runs lighter than typing, and typing gets a human jitter —
+      // a fixed metronome is what made the effect feel hard.
+      const eraseDelay = () => speed * 0.55;
+      const typeDelay = () => speed * (0.75 + Math.random() * 0.7);
+
       function erase() {
         if (cancelled) return;
         if (i > 0) {
+          setPhase("erasing");
           show(fromMiddle.substring(0, --i));
-          setTimeout(erase, speed);
+          setTimeout(erase, eraseDelay());
         } else {
-          typeChar(0);
+          // A short breath between erasing and typing
+          setTimeout(() => typeChar(0), 240);
         }
       }
 
       function typeChar(j: number) {
         if (cancelled) return;
+        setPhase("typing");
         show(toMiddle.substring(0, j));
         if (j < toMiddle.length) {
-          setTimeout(() => typeChar(j + 1), speed);
+          setTimeout(() => typeChar(j + 1), typeDelay());
         } else {
           animatingRef.current = false;
           const pending = targetRef.current;
           if (pending !== to) {
             startAnimation(to, pending);
           } else {
+            setPhase("idle");
             setStable(true);
           }
         }
@@ -113,5 +123,17 @@ export function TypewriterText({ text, speed = 50, children, onStableChange }: P
   }, [text, speed]);
 
   if (stable && children !== undefined) return <>{children}</>;
+  if (phase === "typing" && display.length > 0) {
+    // The newest character fades in over ~140ms instead of popping —
+    // keyed by position so each keystroke replays the animation.
+    return (
+      <>
+        {display.slice(0, -1)}
+        <span key={display.length} className="tw-char">
+          {display.slice(-1)}
+        </span>
+      </>
+    );
+  }
   return <>{display}</>;
 }

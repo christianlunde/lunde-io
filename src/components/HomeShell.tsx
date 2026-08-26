@@ -1,7 +1,7 @@
 "use client";
 
 import { getImageProps } from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { FadeIn } from "@/components/FadeIn";
 import { NowPlaying } from "@/components/NowPlaying";
 import { WeatherPlace, Clock } from "@/components/LocalStatus";
@@ -149,7 +149,14 @@ export function HomeShell() {
         </span>
       </FadeIn>
 
-      <div className="relative flex flex-1 items-center justify-center py-16">
+      {/* Center line lives in the sky band of the photo, colored with the
+          darkest water from the frame itself (10th-percentile sample of the
+          lower-right sea: #253f46) — 8.8:1 against the sky pixels behind it,
+          so it drops the white-on-photo shadow too */}
+      <div
+        style={{ "--brand-muted": "#253f46", textShadow: "none" } as CSSProperties}
+        className="relative flex flex-1 items-start justify-center pt-[13dvh] sm:pt-[15dvh]"
+      >
         <FadeIn play={heroReady} delay={0.25} y={10} duration={0.9}>
           <NowPlaying onStableChange={setTypeStable} />
         </FadeIn>
