@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Space_Mono } from "next/font/google";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 
@@ -58,6 +59,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-dvh flex flex-col bg-brand text-brand-dark">
         {children}
+        <Analytics />
       </body>
     </html>
   );
