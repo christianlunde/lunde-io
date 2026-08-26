@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# lunde.io
 
-## Getting Started
+Personal portfolio and journal for Christian Lunde, product designer.
+Minimal and typography-driven, with live Spotify and Strava status,
+a Sanity-backed journal, and travel guides.
 
-First, run the development server:
+**Next.js 16** (App Router) · React 19 · TypeScript · Tailwind CSS v4 ·
+Sanity v5 (embedded Studio) · Motion · Vercel
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/christianlunde/lunde-io.git
+cd lunde-io && npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Add `.env.local` in the root — it is gitignored and holds eight keys:
+`NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`,
+`SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `SPOTIFY_REFRESH_TOKEN`,
+`STRAVA_CLIENT_ID`, `STRAVA_CLIENT_SECRET`, `STRAVA_REFRESH_TOKEN`.
+Transfer it securely between machines — never over chat or email.
+Production has its own copies in Vercel.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run dev     # http://localhost:3000
+npm run build   # always run before pushing
+npm run lint
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Content is edited in the embedded Sanity Studio at `/studio`.
 
-## Learn More
+## Branches
 
-To learn more about Next.js, take a look at the following resources:
+| Branch | Content | Deploys to |
+|--------|---------|------------|
+| `main` | Coming Soon page | Production — lunde.io |
+| `preview` | Full portfolio | Vercel preview URL |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Pushing is the release: GitHub Actions runs the Vercel CLI on every push.
+The two branches carry different homepages and are never merged — shared
+changes are copied by hand. Do not deploy from the Vercel CLI in this project.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Documentation
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **[CLAUDE.md](CLAUDE.md)** — the rules: branches, deploy, design, conventions
+- **[HANDOFF.md](HANDOFF.md)** — history, why the architecture is what it is,
+  current status, known technical debt, and the ops guide
+- **[AGENTS.md](AGENTS.md)** — Next.js 16 warning for AI agents
