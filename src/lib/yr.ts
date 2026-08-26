@@ -24,7 +24,10 @@ export async function getWeather(
       // Revalidated by the route's Cache-Control; don't hold a stale copy here.
       cache: "no-store",
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.error(`[yr] forecast failed: ${res.status}`);
+      return null;
+    }
 
     const data = await res.json();
     const now = data?.properties?.timeseries?.[0];
@@ -38,7 +41,8 @@ export async function getWeather(
         now.data.next_6_hours?.summary?.symbol_code ??
         null,
     };
-  } catch {
+  } catch (err) {
+    console.error("[yr] forecast error:", err);
     return null;
   }
 }

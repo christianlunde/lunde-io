@@ -149,12 +149,15 @@ export function HomeShell() {
         </span>
       </FadeIn>
 
-      {/* Center line lives in the sky band of the photo, colored with the
-          darkest water from the frame itself (10th-percentile sample of the
-          lower-right sea: #253f46) — 8.8:1 against the sky pixels behind it,
-          so it drops the white-on-photo shadow too */}
+      {/* Center line lives in the sky band, white on owner decision (the
+          sampled water ink read too hard). White measures 1.3:1 against the
+          sky pixels, so a layered shadow — tight edge + wide glow — carries
+          the legibility without a visible scrim */}
       <div
-        style={{ "--brand-muted": "#253f46", textShadow: "none" } as CSSProperties}
+        style={{
+          textShadow:
+            "0 1px 2px rgba(0, 22, 46, 0.25), 0 2px 34px rgba(0, 22, 46, 0.4)",
+        } as CSSProperties}
         className="relative flex flex-1 items-start justify-center pt-[13dvh] sm:pt-[15dvh]"
       >
         <FadeIn play={heroReady} delay={0.25} y={10} duration={0.9}>

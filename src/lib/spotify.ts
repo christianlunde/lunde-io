@@ -103,6 +103,11 @@ export async function getNowPlaying(): Promise<NowPlayingData | NotPlayingData> 
       return { isPlaying: false };
     }
 
+    if (!res.ok) {
+      console.error(`[spotify] now-playing failed: ${res.status}`);
+      return { isPlaying: false };
+    }
+
     const data = await res.json();
 
     if (!data.is_playing || !data.item) {
@@ -117,7 +122,8 @@ export async function getNowPlaying(): Promise<NowPlayingData | NotPlayingData> 
       albumArt: data.item.album.images[0]?.url ?? "",
       songUrl: data.item.external_urls.spotify,
     };
-  } catch {
+  } catch (err) {
+    console.error("[spotify] now-playing error:", err);
     return { isPlaying: false };
   }
 }
@@ -128,10 +134,14 @@ export async function getTopArtists(
 ): Promise<SpotifyArtist[]> {
   try {
     const res = await spotifyFetch(`/me/top/artists?time_range=${range}&limit=${limit}`);
-    if (!res.ok) return [];
+    if (!res.ok) {
+      console.error(`[spotify] top-artists failed: ${res.status}`);
+      return [];
+    }
     const data = await res.json();
     return data.items ?? [];
-  } catch {
+  } catch (err) {
+    console.error("[spotify] top-artists error:", err);
     return [];
   }
 }
@@ -142,10 +152,14 @@ export async function getTopTracks(
 ): Promise<SpotifyTrack[]> {
   try {
     const res = await spotifyFetch(`/me/top/tracks?time_range=${range}&limit=${limit}`);
-    if (!res.ok) return [];
+    if (!res.ok) {
+      console.error(`[spotify] top-tracks failed: ${res.status}`);
+      return [];
+    }
     const data = await res.json();
     return data.items ?? [];
-  } catch {
+  } catch (err) {
+    console.error("[spotify] top-tracks error:", err);
     return [];
   }
 }
@@ -155,10 +169,28 @@ export async function getRecentlyPlayed(limit = 20): Promise<
 > {
   try {
     const res = await spotifyFetch(`/me/player/recently-played?limit=${limit}`);
-    if (!res.ok) return [];
+    if (!res.ok) {
+      console.error(`[spotify] recently-played failed: ${res.status}`);
+      return [];
+    }
     const data = await res.json();
     return data.items ?? [];
-  } catch {
+  } catch (err) {
+    console.error("[spotify] recently-played error:", err);
     return [];
+  }
+}
+
+// --- Health ---
+
+/** True when the token refresh AND an authenticated API call both work. */
+export async function probeSpotify(): Promise<boolean> {
+  try {
+    const res = await spotifyFetch("/me");
+    if (!res.ok) console.error(`[spotify] health probe failed: ${res.status}`);
+    return res.ok;
+  } catch (err) {
+    console.error("[spotify] health probe error:", err);
+    return false;
   }
 }

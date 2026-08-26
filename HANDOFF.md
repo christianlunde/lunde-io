@@ -240,7 +240,13 @@ alltid er tomme, og ingen synlig del av siden viser et bynavn fra Strava.
       `eslint-disable-next-line @typescript-eslint/no-explicit-any` i
       `src/sanity/image.ts` og `src/components/PortableText.tsx`.
       Sanity typegen ville fjernet begge.
-- [ ] **Alt feiler stille.** Hver Sanity-spørring er `try { … } catch { return [] }`
+- [x] **Alt feiler stille** — *dempet 27. august 2026:* alle integrasjons-
+      feil logges nå med `console.error` (synlig i Vercels function logs),
+      og `/api/health` prøver Spotify + Strava + Yr reelt (token OG API-kall,
+      så «Inactive»-fellen fanges) — 200 når alt virker, 503 ellers. Sjekk
+      den etter reiser, eller pek en uptime-monitor på den. Strava-abonnementet
+      utløper ~26. november 2026 — helsesjekken vil vise det.
+      Opprinnelig notat: Hver Sanity-spørring er `try { … } catch { return [] }`
       og hver Spotify-funksjon `catch { return { isPlaying: false } }`. En
       feilkonfigurert miljøvariabel gir tom side i stedet for feil, uten varsling.
       Spesielt: `data.refresh_token` leses aldri ved token-refresh. Verifisert

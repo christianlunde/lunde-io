@@ -84,7 +84,10 @@ export async function getWeeklyActivities(type?: string): Promise<WeeklyStats> {
     const after = Math.floor(monday.getTime() / 1000);
 
     const res = await stravaFetch(`/athlete/activities?after=${after}&per_page=50`);
-    if (!res.ok) return { totalDistance: 0, totalTime: 0, totalElevation: 0, activityCount: 0, activities: [] };
+    if (!res.ok) {
+      console.error(`[strava] weekly activities failed: ${res.status}`);
+      return { totalDistance: 0, totalTime: 0, totalElevation: 0, activityCount: 0, activities: [] };
+    }
 
     let activities: StravaActivity[] = await res.json();
 
@@ -101,7 +104,8 @@ export async function getWeeklyActivities(type?: string): Promise<WeeklyStats> {
       activityCount: activities.length,
       activities,
     };
-  } catch {
+  } catch (err) {
+    console.error("[strava] weekly activities error:", err);
     return { totalDistance: 0, totalTime: 0, totalElevation: 0, activityCount: 0, activities: [] };
   }
 }
@@ -109,10 +113,30 @@ export async function getWeeklyActivities(type?: string): Promise<WeeklyStats> {
 export async function getRecentActivity(): Promise<StravaActivity | null> {
   try {
     const res = await stravaFetch("/athlete/activities?per_page=1");
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.error(`[strava] recent activity failed: ${res.status}`);
+      return null;
+    }
     const activities: StravaActivity[] = await res.json();
     return activities[0] ?? null;
-  } catch {
+  } catch (err) {
+    console.error("[strava] recent activity error:", err);
     return null;
+  }
+}
+
+// --- Health ---
+
+/** True when the token refresh AND an authenticated API call both work —
+ *  catches the app-deactivated case (403 Inactive), where the token refresh
+ *  alone still succeeds. */
+export async function probeStrava(): Promise<boolean> {
+  try {
+    const res = await stravaFetch("/athlete");
+    if (!res.ok) console.error(`[strava] health probe failed: ${res.status}`);
+    return res.ok;
+  } catch (err) {
+    console.error("[strava] health probe error:", err);
+    return false;
   }
 }
