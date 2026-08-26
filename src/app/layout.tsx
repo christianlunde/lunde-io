@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter, DM_Sans, Manrope } from "next/font/google";
+import { Geist } from "next/font/google";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
@@ -10,16 +10,6 @@ const geist = Geist({
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-// TEMPORARY: loaded only for the on-page typography lab (TypoLab.tsx).
-// Remove these three + the [data-typo-*] CSS when a font is chosen.
-const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
-const dmSans = DM_Sans({ variable: "--font-dm-sans", subsets: ["latin"] });
-const manrope = Manrope({ variable: "--font-manrope", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
@@ -67,7 +57,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geist.variable} ${geistMono.variable} ${inter.variable} ${dmSans.variable} ${manrope.variable} min-h-full antialiased`}
+      className={`${geist.variable} min-h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

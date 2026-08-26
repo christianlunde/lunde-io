@@ -9,13 +9,14 @@ import lofoten from "@/images/lofoten.jpg";
 import lofotenVertical from "@/images/lofoten-vertical.jpg";
 import { lofotenBlur, lofotenVerticalBlur } from "@/images/blurs";
 
+// Alphabetical by name
 const projects = [
-  { name: "orgnummer", href: "https://orgnummer.no" },
-  { name: "opentimer", href: "https://opentimer.no" },
-  { name: "openqr", href: "https://openqr.no" },
-  { name: "openmessage", href: "https://openmessage.no" },
-  { name: "opendraw", href: "https://opendraw.no" },
   { name: "leverkongen", href: "https://leverkongen.no" },
+  { name: "opendraw", href: "https://opendraw.no" },
+  { name: "openmessage", href: "https://openmessage.no" },
+  { name: "openqr", href: "https://openqr.no" },
+  { name: "opentimer", href: "https://opentimer.no" },
+  { name: "orgnummer", href: "https://orgnummer.no" },
 ];
 
 /**
@@ -137,7 +138,7 @@ export function HomeShell() {
         y={0}
         duration={0.9}
         style={inkOverSky}
-        className="typo-chrome relative grid grid-cols-3 items-start font-mono text-xs font-bold text-brand-muted"
+        className="relative grid grid-cols-3 items-start font-mono text-xs font-medium text-brand-muted"
       >
         <WeatherPlace />
         <a
@@ -157,7 +158,7 @@ export function HomeShell() {
           the top bar — measured ~7:1 against the sky pixels, no shadow */}
       <div
         style={inkOverSky}
-        className="typo-center relative flex flex-1 items-start justify-center pt-[13dvh] sm:pt-[15dvh]"
+        className="relative flex flex-1 items-start justify-center pt-[13dvh] sm:pt-[15dvh]"
       >
         <FadeIn play={heroReady} delay={0.25} y={10} duration={0.9}>
           <NowPlaying onStableChange={setTypeStable} />
@@ -166,26 +167,20 @@ export function HomeShell() {
 
       <FadeIn play={revealed} delay={0.5} y={0} duration={0.9} className="relative">
         <nav aria-label="Latest projects" className="text-center">
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-brand-muted">
+          <p className="font-mono text-xs tracking-wide text-brand-muted">
             Latest projects
           </p>
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 font-mono text-xs text-brand-muted">
-            {projects.map((project, i) => (
-              <span key={project.href} className="whitespace-nowrap">
-                <a
-                  href={project.href}
-                  target="_blank"
-                  rel="noopener"
-                  className="underline-offset-4 transition-opacity hover:underline"
-                >
-                  {project.name}
-                </a>
-                {i < projects.length - 1 && (
-                  <span aria-hidden="true" className="ml-3 select-none text-brand-muted/40">
-                    ·
-                  </span>
-                )}
-              </span>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 font-mono">
+            {projects.map((project) => (
+              <a
+                key={project.href}
+                href={project.href}
+                target="_blank"
+                rel="noopener"
+                className="rounded-full border border-white/40 px-3 py-1.5 text-xs text-white/80 transition-colors hover:border-white/90 hover:bg-white/10 hover:text-white"
+              >
+                {project.name}
+              </a>
             ))}
           </div>
         </nav>

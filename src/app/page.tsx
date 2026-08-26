@@ -1,7 +1,6 @@
 import { getImageProps } from "next/image";
 import type { CSSProperties } from "react";
 import { HomeShell } from "@/components/HomeShell";
-import { TypoLab } from "@/components/TypoLab";
 import lofoten from "@/images/lofoten.jpg";
 import lofotenVertical from "@/images/lofoten-vertical.jpg";
 
@@ -49,7 +48,6 @@ export default function Home() {
         className="relative flex min-h-dvh flex-col overflow-hidden px-6 py-6 sm:px-10 sm:py-8"
       >
         <HomeShell />
-        <TypoLab />
       </section>
     </>
   );

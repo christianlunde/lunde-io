@@ -17,7 +17,9 @@
   --color-brand-dark: var(--brand-dark);
   --color-brand-muted: var(--brand-muted);
   --font-heading: var(--font-geist);
-  --font-mono: var(--font-geist-mono);
+  /* Historical token name: the whole site runs Geist Sans since 2026-08-27;
+     markup still says font-mono everywhere, so the token maps to Geist. */
+  --font-mono: var(--font-geist);
   --animate-fade-in: fade-in 0.2s ease-out;
 }
 
@@ -65,37 +67,3 @@ html.hero-img-ready .hero-img {
   opacity: 1;
 }
 
-/* TEMPORARY typography lab — see TypoLab.tsx. Overrides the utility class
-   directly ( @theme inline bakes values at build time). Remove with the lab. */
-[data-typo-font="geist-sans"] body,
-[data-typo-font="geist-sans"] .font-mono {
-  font-family: var(--font-geist), sans-serif;
-}
-
-[data-typo-font="inter"] body,
-[data-typo-font="inter"] .font-mono {
-  font-family: var(--font-inter), sans-serif;
-}
-
-[data-typo-font="dm-sans"] body,
-[data-typo-font="dm-sans"] .font-mono {
-  font-family: var(--font-dm-sans), sans-serif;
-}
-
-[data-typo-font="manrope"] body,
-[data-typo-font="manrope"] .font-mono {
-  font-family: var(--font-manrope), sans-serif;
-}
-
-[data-typo-weight="centerbold"] .typo-chrome {
-  font-weight: 400;
-}
-[data-typo-weight="centerbold"] .typo-center p {
-  font-weight: 700;
-}
-[data-typo-weight="regular"] .typo-chrome {
-  font-weight: 400;
-}
-[data-typo-weight="regular"] .typo-center p {
-  font-weight: 400;
-}
