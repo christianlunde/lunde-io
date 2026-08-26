@@ -9,6 +9,22 @@ interface Props {
   children?: ReactNode;
 }
 
+/** Number of leading characters `a` and `b` share. */
+function sharedPrefix(a: string, b: string): number {
+  const max = Math.min(a.length, b.length);
+  let i = 0;
+  while (i < max && a[i] === b[i]) i++;
+  return i;
+}
+
+/** Number of trailing characters `a` and `b` share, not reaching into `skip`. */
+function sharedSuffix(a: string, b: string, skip: number): number {
+  const max = Math.min(a.length, b.length) - skip;
+  let i = 0;
+  while (i < max && a[a.length - 1 - i] === b[b.length - 1 - i]) i++;
+  return i;
+}
+
 export function TypewriterText({ text, speed = 50, children }: Props) {
   const [display, setDisplay] = useState(text);
   const [stable, setStable] = useState(true);
@@ -39,13 +55,27 @@ export function TypewriterText({ text, speed = 50, children }: Props) {
         animatingRef.current = false;
       };
 
-      let i = from.length;
+      // Only retype what actually differs. Swapping one song for another
+      // leaves "…while listening to " and the closing "." untouched, so just
+      // the title is erased and replaced.
+      const prefix = sharedPrefix(from, to);
+      const suffix = sharedSuffix(from, to, prefix);
+      const head = to.slice(0, prefix);
+      const tail = suffix > 0 ? to.slice(to.length - suffix) : "";
+      const fromMiddle = from.slice(prefix, from.length - suffix);
+      const toMiddle = to.slice(prefix, to.length - suffix);
+
+      function show(middle: string) {
+        displayRef.current = head + middle + tail;
+        setDisplay(displayRef.current);
+      }
+
+      let i = fromMiddle.length;
 
       function erase() {
         if (cancelled) return;
         if (i > 0) {
-          displayRef.current = from.substring(0, --i);
-          setDisplay(displayRef.current);
+          show(fromMiddle.substring(0, --i));
           setTimeout(erase, speed);
         } else {
           typeChar(0);
@@ -54,9 +84,8 @@ export function TypewriterText({ text, speed = 50, children }: Props) {
 
       function typeChar(j: number) {
         if (cancelled) return;
-        displayRef.current = to.substring(0, j);
-        setDisplay(displayRef.current);
-        if (j < to.length) {
+        show(toMiddle.substring(0, j));
+        if (j < toMiddle.length) {
           setTimeout(() => typeChar(j + 1), speed);
         } else {
           animatingRef.current = false;
