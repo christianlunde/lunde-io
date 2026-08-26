@@ -167,7 +167,7 @@ export function HomeShell() {
 
       <FadeIn play={revealed} delay={0.5} y={0} duration={0.9} className="relative">
         <nav aria-label="Latest projects" className="text-center">
-          <p className="font-mono text-xs tracking-wide text-brand-muted">
+          <p className="font-mono text-xs font-medium text-brand-muted">
             Latest projects
           </p>
           <div className="mt-4 flex flex-wrap items-center justify-center gap-2 font-mono">
@@ -177,7 +177,7 @@ export function HomeShell() {
                 href={project.href}
                 target="_blank"
                 rel="noopener"
-                className="rounded-full border border-white/40 px-3 py-1.5 text-xs text-white/80 transition-colors hover:border-white/90 hover:bg-white/10 hover:text-white"
+                className="rounded-full border border-white/40 px-3 py-1.5 text-xs text-white/80 transition duration-200 ease-out hover:border-white/90 hover:bg-white/10 hover:text-white motion-safe:hover:-translate-y-px motion-safe:hover:scale-[1.03]"
               >
                 {project.name}
               </a>
