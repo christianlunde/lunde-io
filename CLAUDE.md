@@ -24,7 +24,7 @@ chat log — if something is worth remembering next session, write it down here.
 
 | Branch | Content | Deploys to |
 |--------|---------|------------|
-| `main` | Coming Soon page (NowPlaying + clock) | **Production** — lunde.io |
+| `main` | Coming Soon page (Lofoten photo hero + NowPlaying + weather/clock) | **Production** — lunde.io |
 | `preview` | Full portfolio (hero, clients, journal, music, places) | Vercel preview URL |
 
 - **Push is the release.** GitHub Actions (`.github/workflows/deploy.yml`)

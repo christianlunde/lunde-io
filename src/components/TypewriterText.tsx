@@ -7,6 +7,8 @@ interface Props {
   speed?: number;
   /** Rich JSX shown instead of plain text once animation settles */
   children?: ReactNode;
+  /** Reports settling: false while erasing/typing, true when at rest. */
+  onStableChange?: (stable: boolean) => void;
 }
 
 /** Number of leading characters `a` and `b` share. */
@@ -25,7 +27,7 @@ function sharedSuffix(a: string, b: string, skip: number): number {
   return i;
 }
 
-export function TypewriterText({ text, speed = 50, children }: Props) {
+export function TypewriterText({ text, speed = 50, children, onStableChange }: Props) {
   const [display, setDisplay] = useState(text);
   const [stable, setStable] = useState(true);
 
@@ -33,6 +35,12 @@ export function TypewriterText({ text, speed = 50, children }: Props) {
   const targetRef = useRef(text);
   const animatingRef = useRef(false);
   const cancelRef = useRef<() => void>(() => {});
+
+  const onStableRef = useRef(onStableChange);
+  onStableRef.current = onStableChange;
+  useEffect(() => {
+    onStableRef.current?.(stable);
+  }, [stable]);
 
   useEffect(() => {
     targetRef.current = text;

@@ -68,7 +68,7 @@ function buildSuffix(
   };
 }
 
-export function NowPlaying() {
+export function NowPlaying({ onStableChange }: { onStableChange?: (stable: boolean) => void } = {}) {
   const [track, setTrack] = useState<TrackData | null>(null);
   const [cycling, setCycling] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -130,7 +130,7 @@ export function NowPlaying() {
   return (
     <p className="font-mono text-sm font-bold tracking-wide text-brand-muted text-center whitespace-pre-line">
       Currently exploring what&apos;s next
-      <TypewriterText text={suffixText}>{suffixRich}</TypewriterText>
+      <TypewriterText text={suffixText} onStableChange={onStableChange}>{suffixRich}</TypewriterText>
     </p>
   );
 }

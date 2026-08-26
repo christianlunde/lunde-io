@@ -2,18 +2,13 @@
 
 import { useEffect, useState } from "react";
 
-interface Props {
+interface PlaceProps {
   city?: string;
   timezone?: string;
 }
 
-/**
- * Renders "20 °C Oslo 12:23". The temperature is dropped until Yr answers, so
- * the line reads "Oslo 12:23" rather than showing a placeholder.
- */
-export function LocalStatus({ city: cityProp, timezone: timezoneProp }: Props) {
+function useLocalPlace(cityProp?: string, timezoneProp?: string) {
   const [place, setPlace] = useState<{ city: string; time: string } | null>(null);
-  const [temperature, setTemperature] = useState<number | null>(null);
 
   useEffect(() => {
     const timezone = timezoneProp || Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -36,6 +31,12 @@ export function LocalStatus({ city: cityProp, timezone: timezoneProp }: Props) {
 
     return () => clearInterval(interval);
   }, [cityProp, timezoneProp]);
+
+  return place;
+}
+
+function useTemperature() {
+  const [temperature, setTemperature] = useState<number | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -62,12 +63,29 @@ export function LocalStatus({ city: cityProp, timezone: timezoneProp }: Props) {
     };
   }, []);
 
+  return temperature;
+}
+
+/** "19 °C Oslo" — the temperature is omitted until Yr answers. */
+export function WeatherPlace({ city, timezone }: PlaceProps) {
+  const place = useLocalPlace(city, timezone);
+  const temperature = useTemperature();
+
   if (!place) return null;
 
   return (
     <span>
       {temperature !== null && `${temperature} °C `}
-      {place.city} {place.time}
+      {place.city}
     </span>
   );
+}
+
+/** "00:32" — minute-accurate local clock. */
+export function Clock({ city, timezone }: PlaceProps) {
+  const place = useLocalPlace(city, timezone);
+
+  if (!place) return null;
+
+  return <span>{place.time}</span>;
 }
