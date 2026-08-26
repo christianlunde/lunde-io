@@ -29,6 +29,22 @@ const themeScript = `
   if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     document.documentElement.classList.add('dark');
   }
+  function heroReady() { document.documentElement.classList.add('hero-img-ready'); }
+  function heroScan() {
+    var im = document.querySelector('img.hero-img');
+    if (im && im.complete && im.naturalWidth > 0) heroReady();
+  }
+  // Covers every ordering: image loads after us (capture listener), image
+  // already complete when we run (scan), or we run mid-parse (DCL scan).
+  document.addEventListener('load', function(e) {
+    var t = e.target;
+    if (t && t.tagName === 'IMG' && t.classList && t.classList.contains('hero-img')) heroReady();
+  }, true);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', heroScan);
+  } else {
+    heroScan();
+  }
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
     if (!localStorage.getItem('theme')) {
       document.documentElement.classList.toggle('dark', e.matches);

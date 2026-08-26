@@ -28,18 +28,14 @@ const projects = [
  */
 function HeroPicture({ onReady }: { onReady: () => void }) {
   const imgRef = useRef<HTMLImageElement>(null);
-  const [loaded, setLoaded] = useState(false);
 
+  // Visual reveal is handled pre-hydration by the theme script's load
+  // listener (html.hero-img-ready); React only gates the choreography.
   // A cached image can be complete before hydration — onLoad never fires.
   useEffect(() => {
-    if (imgRef.current?.complete) handleLoad();
+    if (imgRef.current?.complete) onReady();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  function handleLoad() {
-    setLoaded(true);
-    onReady();
-  }
 
   const common = {
     alt: "Christian sitting on a ridge in Lofoten at dusk",
@@ -80,15 +76,22 @@ function HeroPicture({ onReady }: { onReady: () => void }) {
         <img
           ref={imgRef}
           {...rest}
-          onLoad={handleLoad}
-          className="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-out"
-          // 0.01, not 0: keeps the img painted so LCP is measured honestly
-          style={{ objectPosition: "28% 48%", opacity: loaded ? 1 : 0.01 }}
+          onLoad={onReady}
+          className="hero-img absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-out"
+          style={{ objectPosition: "28% 48%" }}
         />
       </picture>
     </>
   );
 }
+
+// Muted slate-navy for the top bar and the center line (owner choice);
+// dark ink over the bright sky needs no shadow, so both opt out of the
+// section-level white-text glow. The footer stays white over the dark grass.
+const inkOverSky = {
+  "--brand-muted": "rgb(40 57 92)",
+  textShadow: "none",
+} as CSSProperties;
 
 /**
  * Sequences the entrance on a settled canvas: blur placeholder → photo
@@ -123,8 +126,8 @@ export function HomeShell() {
   return (
     <>
       <HeroPicture onReady={() => setHeroReady(true)} />
-      {/* Subtle scrims top and bottom; the middle of the frame stays clean */}
-      <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-black/30 to-transparent" />
+      {/* Bottom scrim only — the white footer needs it over the grass; the
+          top bar is dark ink now and reads clean against the bare sky */}
       <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/40 to-transparent" />
 
       {/* Top bar: weather + place | Instagram | clock */}
@@ -133,6 +136,7 @@ export function HomeShell() {
         delay={0.15}
         y={0}
         duration={0.9}
+        style={inkOverSky}
         className="relative grid grid-cols-3 items-start font-mono text-xs text-brand-muted"
       >
         <WeatherPlace />
@@ -149,15 +153,10 @@ export function HomeShell() {
         </span>
       </FadeIn>
 
-      {/* Center line lives in the sky band, white on owner decision (the
-          sampled water ink read too hard). White measures 1.3:1 against the
-          sky pixels, so a layered shadow — tight edge + wide glow — carries
-          the legibility without a visible scrim */}
+      {/* Center line lives in the sky band, in the same slate-navy ink as
+          the top bar — measured ~7:1 against the sky pixels, no shadow */}
       <div
-        style={{
-          textShadow:
-            "0 1px 2px rgba(0, 22, 46, 0.25), 0 2px 34px rgba(0, 22, 46, 0.4)",
-        } as CSSProperties}
+        style={inkOverSky}
         className="relative flex flex-1 items-start justify-center pt-[13dvh] sm:pt-[15dvh]"
       >
         <FadeIn play={heroReady} delay={0.25} y={10} duration={0.9}>

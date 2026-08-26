@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 interface FadeInProps {
   children: ReactNode;
@@ -15,6 +15,7 @@ interface FadeInProps {
    *  settled. Ignored under prefers-reduced-motion (content shows at once). */
   play?: boolean;
   className?: string;
+  style?: CSSProperties;
 }
 
 export function FadeIn({
@@ -24,6 +25,7 @@ export function FadeIn({
   duration = 0.8,
   play = true,
   className,
+  style,
 }: FadeInProps) {
   const reduceMotion = useReducedMotion();
 
@@ -39,6 +41,7 @@ export function FadeIn({
           : { duration, delay, ease: [0.16, 1, 0.3, 1] }
       }
       className={className}
+      style={style}
     >
       {children}
     </motion.div>

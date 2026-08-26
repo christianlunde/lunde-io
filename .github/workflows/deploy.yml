@@ -25,3 +25,37 @@ jobs:
 
       - name: Deploy
         run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} ${{ github.ref_name == 'main' && '--prod' || '' }}
+
+      # A deploy with new image hashes leaves Vercel's optimizer cache cold,
+      # and the first visitor pays seconds of on-demand encoding per variant.
+      # Fetch every /_next/image URL the homepage offers so the cache is warm
+      # before anyone real arrives.
+      - name: Warm image cache
+        if: github.ref_name == 'main'
+        run: |
+          node -e '
+          const ORIGIN = "https://lunde.io";
+          (async () => {
+            const html = await (await fetch(ORIGIN)).text();
+            const urls = [...new Set(
+              [...html.matchAll(/\/_next\/image\?[^"\s,]+/g)]
+                .map((m) => m[0].replaceAll("&amp;", "&"))
+            )];
+            urls.push("/opengraph-image.jpg");
+            console.log(`warming ${urls.length} image URLs`);
+            let ok = 0, fail = 0;
+            for (let i = 0; i < urls.length; i += 4) {
+              await Promise.all(urls.slice(i, i + 4).map(async (u) => {
+                try {
+                  const r = await fetch(ORIGIN + u, {
+                    headers: { Accept: "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8" },
+                  });
+                  r.ok ? ok++ : (fail++, console.log(`  ${r.status} ${u.slice(0, 90)}`));
+                  await r.arrayBuffer();
+                } catch (e) { fail++; console.log(`  ERR ${u.slice(0, 90)}: ${e.message}`); }
+              }));
+            }
+            console.log(`warmed: ${ok} ok, ${fail} failed`);
+            if (ok === 0) process.exit(1);
+          })();
+          '
