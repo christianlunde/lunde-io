@@ -127,9 +127,31 @@ export function HomeShell() {
   return (
     <>
       <HeroPicture onReady={() => setHeroReady(true)} />
-      {/* Bottom scrim only — the white footer needs it over the grass; the
-          top bar is dark ink now and reads clean against the bare sky */}
-      <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/40 to-transparent" />
+      {/* Progressive blur toward the bottom edge: stacked backdrop layers
+          with increasing radius and staggered masks — one masked layer only
+          fades a uniform blur in; the stack is what reads as progressive */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-44">
+        {[
+          [1, 0, 45],
+          [2, 25, 60],
+          [4, 45, 75],
+          [8, 65, 90],
+        ].map(([radius, from, to]) => (
+          <div
+            key={radius}
+            className="absolute inset-0"
+            style={{
+              backdropFilter: `blur(${radius}px)`,
+              WebkitBackdropFilter: `blur(${radius}px)`,
+              maskImage: `linear-gradient(to bottom, transparent ${from}%, black ${to}%)`,
+              WebkitMaskImage: `linear-gradient(to bottom, transparent ${from}%, black ${to}%)`,
+            }}
+          />
+        ))}
+      </div>
+      {/* Softer scrim on top of the blur — the blur now carries part of the
+          separation, so the darkening can back off */}
+      <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/30 to-transparent" />
 
       {/* Top bar: weather + place | Instagram | clock */}
       <FadeIn
