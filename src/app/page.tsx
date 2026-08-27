@@ -1,8 +1,18 @@
 import { getImageProps } from "next/image";
+import type { Viewport } from "next";
 import type { CSSProperties } from "react";
 import { HomeShell } from "@/components/HomeShell";
 import lofoten from "@/images/lofoten.jpg";
 import lofotenVertical from "@/images/lofoten-vertical.jpg";
+
+// Safari paints its chrome in theme-color; the brand navy read as heavy
+// bars around the photo. This is the average of the portrait hero's top
+// 2% of pixels (sampled with sharp), so the status bar dissolves into the
+// sky. Homepage only — other pages keep their own background-derived tint.
+export const viewport: Viewport = {
+  viewportFit: "cover",
+  themeColor: "#bdc5d3",
+};
 
 // Recolors every text token inside the section so the shared components
 // render in white over the photo; the soft shadow keeps the mono text
