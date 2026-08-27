@@ -130,12 +130,12 @@ export function HomeShell() {
       {/* Progressive blur toward the bottom edge: stacked backdrop layers
           with increasing radius and staggered masks — one masked layer only
           fades a uniform blur in; the stack is what reads as progressive */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-44">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-64">
         {[
-          [1, 0, 45],
-          [2, 25, 60],
-          [4, 45, 75],
-          [8, 65, 90],
+          [0.5, 0, 45],
+          [1, 25, 60],
+          [2, 45, 75],
+          [4, 65, 90],
         ].map(([radius, from, to]) => (
           <div
             key={radius}

@@ -21,6 +21,36 @@ interface WeeklyResponse {
   km: number;
 }
 
+// Status line rotation (owner-curated). Every NEW visitor sees the classic
+// first; later loads pick randomly among the others, never repeating the
+// line shown last time. Stored in localStorage so "first visit" survives
+// sessions; all storage access is fail-soft (private mode etc.).
+const CLASSIC = "Currently exploring what’s next";
+const LINES = [
+  "Building small things",
+  "Out exploring",
+  CLASSIC,
+  "Working on something",
+  "Taking the scenic route",
+];
+
+function pickStatusLine(): string {
+  try {
+    if (!localStorage.getItem("statusline-seen")) {
+      localStorage.setItem("statusline-seen", "1");
+      localStorage.setItem("statusline-last", CLASSIC);
+      return CLASSIC;
+    }
+    const last = localStorage.getItem("statusline-last");
+    const pool = LINES.filter((l) => l !== last);
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    localStorage.setItem("statusline-last", pick);
+    return pick;
+  } catch {
+    return CLASSIC;
+  }
+}
+
 function buildSuffix(
   track: TrackData | null,
   km: number | null
@@ -72,10 +102,14 @@ export function NowPlaying({ onStableChange }: { onStableChange?: (stable: boole
   const [track, setTrack] = useState<TrackData | null>(null);
   const [cycling, setCycling] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
+  // Classic until mounted so the client's first render matches the SSR HTML;
+  // the swap happens while the line is still held invisible by heroReady.
+  const [prefix, setPrefix] = useState(CLASSIC);
 
   useEffect(() => {
     let active = true;
     setMounted(true);
+    setPrefix(pickStatusLine());
 
     async function fetchTrack() {
       try {
@@ -129,7 +163,7 @@ export function NowPlaying({ onStableChange }: { onStableChange?: (stable: boole
 
   return (
     <p className="font-mono text-[15px] tracking-wide text-brand-muted text-center whitespace-pre-line">
-      Currently exploring what’s next
+      {prefix}
       <TypewriterText text={suffixText} onStableChange={onStableChange}>{suffixRich}</TypewriterText>
     </p>
   );
