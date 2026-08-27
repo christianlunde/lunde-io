@@ -98,7 +98,17 @@ function buildSuffix(
   };
 }
 
-export function NowPlaying({ onStableChange }: { onStableChange?: (stable: boolean) => void } = {}) {
+export function NowPlaying({
+  onStableChange,
+  revealed = true,
+}: {
+  onStableChange?: (stable: boolean) => void;
+  /** While false the suffix is held back, so the typewriter performs on
+   *  stage after the line has faded in instead of finishing invisibly
+   *  before the reveal. Data is fetched regardless, so typing starts the
+   *  moment this flips. */
+  revealed?: boolean;
+} = {}) {
   const [track, setTrack] = useState<TrackData | null>(null);
   const [cycling, setCycling] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -159,7 +169,10 @@ export function NowPlaying({ onStableChange }: { onStableChange?: (stable: boole
     );
   }
 
-  const { text: suffixText, rich: suffixRich } = buildSuffix(track, cycling);
+  const { text: suffixText, rich: suffixRich } = buildSuffix(
+    revealed ? track : null,
+    revealed ? cycling : null,
+  );
 
   return (
     <p className="font-mono text-[15px] tracking-wide text-brand-muted text-center whitespace-pre-line">

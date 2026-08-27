@@ -105,6 +105,9 @@ const inkOverSky = {
  */
 export function HomeShell() {
   const [heroReady, setHeroReady] = useState(false);
+  // Released 450ms after heroReady, when the line's fade is underway —
+  // the typewriter then performs visibly instead of before the reveal
+  const [typeGo, setTypeGo] = useState(false);
   const [typeStable, setTypeStable] = useState(true);
   const [minTimePassed, setMinTimePassed] = useState(false);
   const [revealed, setRevealed] = useState(false);
@@ -116,8 +119,12 @@ export function HomeShell() {
 
   useEffect(() => {
     if (!heroReady) return;
-    const t = setTimeout(() => setMinTimePassed(true), 1500);
-    return () => clearTimeout(t);
+    const go = setTimeout(() => setTypeGo(true), 450);
+    const min = setTimeout(() => setMinTimePassed(true), 1500);
+    return () => {
+      clearTimeout(go);
+      clearTimeout(min);
+    };
   }, [heroReady]);
 
   useEffect(() => {
@@ -183,11 +190,11 @@ export function HomeShell() {
         className="relative flex flex-1 items-start justify-center pt-[13dvh] sm:pt-[15dvh]"
       >
         <FadeIn play={heroReady} delay={0.25} y={0} duration={1.1}>
-          <NowPlaying onStableChange={setTypeStable} />
+          <NowPlaying onStableChange={setTypeStable} revealed={typeGo} />
         </FadeIn>
       </div>
 
-      <FadeIn play={revealed} delay={0.5} y={0} duration={0.9} className="relative">
+      <FadeIn play={revealed} delay={0.85} y={0} duration={0.9} className="relative">
         <nav aria-label="Latest projects" className="text-center">
           <p className="font-mono text-xs font-medium text-brand-muted">
             Latest projects

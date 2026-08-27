@@ -101,13 +101,13 @@ export function WeatherPlace({ city, timezone }: PlaceProps) {
 
   return (
     <span className="flex items-center gap-1.5">
-      {temperature !== null && <span>{temperature} °C</span>}
       {condition && (
         <span aria-hidden="true" className="flex items-center">
           <condition.Icon size={13} />
         </span>
       )}
       {condition && <span className="sr-only">{condition.word}</span>}
+      {temperature !== null && <span>{temperature} °C</span>}
       <span>{place.city}</span>
     </span>
   );
