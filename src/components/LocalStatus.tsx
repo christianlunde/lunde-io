@@ -1,6 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ComponentType } from "react";
+import {
+  Sun,
+  Cloud,
+  CloudRain,
+  CloudDrizzle,
+  CloudSnow,
+  CloudLightning,
+} from "react-feather";
 
 interface PlaceProps {
   city?: string;
@@ -35,8 +43,25 @@ function useLocalPlace(cityProp?: string, timezoneProp?: string) {
   return place;
 }
 
+/** MET symbol_code (e.g. "partlycloudy_night") → icon + accessible word. */
+function describeSymbol(
+  code: string | null,
+): { Icon: ComponentType<{ size?: number | string; className?: string }>; word: string } | null {
+  if (!code) return null;
+  const base = code.split("_")[0];
+  if (base.includes("thunder")) return { Icon: CloudLightning, word: "thunder" };
+  if (base.includes("sleet")) return { Icon: CloudDrizzle, word: "sleet" };
+  if (base.includes("snow")) return { Icon: CloudSnow, word: "snow" };
+  if (base.includes("rain")) return { Icon: CloudRain, word: "rain" };
+  if (base === "clearsky" || base === "fair") return { Icon: Sun, word: "clear" };
+  if (base === "partlycloudy" || base === "cloudy" || base === "fog")
+    return { Icon: Cloud, word: base === "fog" ? "fog" : "cloudy" };
+  return null;
+}
+
 function useTemperature() {
   const [temperature, setTemperature] = useState<number | null>(null);
+  const [condition, setCondition] = useState<ReturnType<typeof describeSymbol>>(null);
 
   useEffect(() => {
     let active = true;
@@ -45,9 +70,10 @@ function useTemperature() {
       try {
         const res = await fetch("/api/weather");
         if (!res.ok) return;
-        const data: { temperature?: number } = await res.json();
+        const data: { temperature?: number; symbol?: string | null } = await res.json();
         if (active && typeof data.temperature === "number") {
           setTemperature(data.temperature);
+          setCondition(describeSymbol(data.symbol ?? null));
         }
       } catch {
         // Non-critical
@@ -63,20 +89,26 @@ function useTemperature() {
     };
   }, []);
 
-  return temperature;
+  return { temperature, condition };
 }
 
 /** "19 °C Oslo" — the temperature is omitted until Yr answers. */
 export function WeatherPlace({ city, timezone }: PlaceProps) {
   const place = useLocalPlace(city, timezone);
-  const temperature = useTemperature();
+  const { temperature, condition } = useTemperature();
 
   if (!place) return null;
 
   return (
-    <span>
-      {temperature !== null && `${temperature} °C `}
-      {place.city}
+    <span className="flex items-center gap-1.5">
+      {temperature !== null && <span>{temperature} °C</span>}
+      {condition && (
+        <span aria-hidden="true" className="flex items-center">
+          <condition.Icon size={13} />
+        </span>
+      )}
+      {condition && <span className="sr-only">{condition.word}</span>}
+      <span>{place.city}</span>
     </span>
   );
 }

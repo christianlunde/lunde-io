@@ -45,7 +45,7 @@ export default function Home() {
       />
       <section
         style={overPhoto}
-        className="relative flex min-h-dvh flex-col overflow-hidden px-6 py-6 sm:px-10 sm:py-8"
+        className="relative flex min-h-dvh flex-col overflow-hidden pl-[max(1.5rem,env(safe-area-inset-left))] pr-[max(1.5rem,env(safe-area-inset-right))] pt-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-10 sm:py-8"
       >
         <HomeShell />
       </section>

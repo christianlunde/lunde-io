@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
@@ -10,6 +10,9 @@ const geist = Geist({
   subsets: ["latin"],
 });
 
+
+// env(safe-area-inset-*) is zero without viewport-fit=cover
+export const viewport: Viewport = { viewportFit: "cover" };
 
 export const metadata: Metadata = {
   title: {

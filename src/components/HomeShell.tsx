@@ -145,7 +145,7 @@ export function HomeShell() {
           href="https://www.instagram.com/christianlunde"
           target="_blank"
           rel="noopener"
-          className="justify-self-center underline-offset-4 transition-opacity hover:underline"
+          className="-m-3.5 justify-self-center p-3.5 underline-offset-4 transition-opacity hover:underline focus-visible:underline sm:m-0 sm:p-0"
         >
           Instagram
         </a>
@@ -177,7 +177,7 @@ export function HomeShell() {
                 href={project.href}
                 target="_blank"
                 rel="noopener"
-                className="rounded-full border border-white/40 px-3 py-1.5 text-xs text-white/80 transition duration-200 ease-out hover:border-white/90 hover:bg-white/10 hover:text-white motion-safe:hover:-translate-y-px motion-safe:hover:scale-[1.03]"
+                className="inline-flex min-h-11 items-center rounded-full border border-white/40 px-4 py-1.5 text-xs text-white/80 transition duration-200 ease-out hover:border-white/90 hover:bg-white/10 hover:text-white focus-visible:border-white/90 focus-visible:bg-white/10 focus-visible:text-white motion-safe:hover:-translate-y-px motion-safe:hover:scale-[1.03] sm:min-h-0 sm:px-3"
               >
                 {project.name}
               </a>

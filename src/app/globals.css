@@ -67,3 +67,11 @@ html.hero-img-ready .hero-img {
   opacity: 1;
 }
 
+
+/* Keyboard focus mirrors hover care: a ring in the text's own color.
+   Modern browsers follow the element's border-radius. */
+:where(a, button):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+  border-radius: 3px;
+}

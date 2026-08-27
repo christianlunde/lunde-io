@@ -120,7 +120,7 @@ export function NowPlaying({ onStableChange }: { onStableChange?: (stable: boole
   if (!mounted) {
     return (
       <p className="font-mono text-[15px] tracking-wide text-brand-muted text-center">
-        Currently exploring what&apos;s next.
+        Currently exploring what’s next.
       </p>
     );
   }
@@ -129,7 +129,7 @@ export function NowPlaying({ onStableChange }: { onStableChange?: (stable: boole
 
   return (
     <p className="font-mono text-[15px] tracking-wide text-brand-muted text-center whitespace-pre-line">
-      Currently exploring what&apos;s next
+      Currently exploring what’s next
       <TypewriterText text={suffixText} onStableChange={onStableChange}>{suffixRich}</TypewriterText>
     </p>
   );
