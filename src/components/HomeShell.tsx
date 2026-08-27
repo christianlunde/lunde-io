@@ -78,7 +78,7 @@ function HeroPicture({ onReady }: { onReady: () => void }) {
           ref={imgRef}
           {...rest}
           onLoad={onReady}
-          className="hero-img absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-out"
+          className="hero-img absolute inset-0 h-full w-full object-cover"
           style={{ objectPosition: "28% 48%" }}
         />
       </picture>
