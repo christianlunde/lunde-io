@@ -61,28 +61,33 @@ h1, h2, h3, h4, h5, h6 {
    React hydration. 0.01 keeps the img painted for honest LCP.
    The photo starts as blurred as the placeholder behind it and focuses
    in, so the reveal reads as one continuous de-blur instead of a sharp
-   frame fading in on top. The slight scale hides blur edge bleed. */
+   frame fading in on top. No scaling motion (owner choice): the frame is
+   statically oversized by the blur radius instead, so the blur's edge
+   fringe never reaches the viewport. */
 .hero-img {
+  position: absolute;
+  inset: -24px;
+  width: calc(100% + 48px);
+  height: calc(100% + 48px);
+  /* Tailwind preflight caps img at max-width:100%, which would stop the
+     oversize 24px short of the right edge */
+  max-width: none;
   opacity: 0.01;
   filter: blur(24px);
-  transform: scale(1.05);
   transition:
     opacity 0.9s ease-out,
-    filter 1.5s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+    filter 1.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html.hero-img-ready .hero-img {
   opacity: 1;
   filter: blur(0);
-  transform: scale(1);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-img {
     transition: none;
     filter: none;
-    transform: none;
   }
 }
 
