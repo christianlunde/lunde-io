@@ -15,6 +15,9 @@ const geist = Geist({
 export const viewport: Viewport = { viewportFit: "cover" };
 
 export const metadata: Metadata = {
+  // Without this, statically prerendered pages bake the BUILD environment's
+  // host into og:image/twitter:image - shares pointed at localhost:3000
+  metadataBase: new URL("https://lunde.io"),
   title: {
     default: "Christian Lunde · Designer",
     template: "%s · Christian Lunde",
