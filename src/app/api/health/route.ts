@@ -16,7 +16,11 @@ export async function GET() {
     getWeather().then((w) => w !== null),
   ]);
 
-  const ok = spotify && strava && weather;
+  // Cycling is switched off on the site (see NowPlaying.tsx), so Strava is
+  // reported but no longer fails the endpoint - re-include it when the
+  // feature returns. Without this, the November subscription expiry would
+  // page about a feature nobody sees.
+  const ok = spotify && weather;
 
   return NextResponse.json(
     {

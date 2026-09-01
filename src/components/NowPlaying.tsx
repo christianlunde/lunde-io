@@ -25,6 +25,12 @@ interface WeeklyResponse {
 // first; later loads pick randomly among the others, never repeating the
 // line shown last time. Stored in localStorage so "first visit" survives
 // sessions; all storage access is fail-soft (private mode etc.).
+// Cycling in the status line is switched off (2026-08-30): combined with
+// the rotating lines it read clunky ("Out exploring on my bike (48 km…)").
+// All the plumbing - buildSuffix branches, /api/strava/weekly, lib/strava -
+// is kept intact; flip this to true to bring it back.
+const CYCLING_ENABLED = false;
+
 const CLASSIC = "Currently exploring what’s next";
 const LINES = [
   "Building small things",
@@ -152,7 +158,7 @@ export function NowPlaying({
     }
 
     fetchTrack();
-    fetchCycling();
+    if (CYCLING_ENABLED) fetchCycling();
     const interval = setInterval(fetchTrack, 10_000);
 
     return () => {

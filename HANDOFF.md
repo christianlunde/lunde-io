@@ -154,6 +154,12 @@ haster mest. Ingenting av dette er fikset ennå.
       Årsak: Stravas krav om abonnement for eksisterende Standard Tier-utviklere
       fra 30. juni 2026. Christian tegnet abonnement (3 måneder), og API-et
       svarte `200 OK` umiddelbart etterpå.
+      *Oppdatering 30. august 2026:* sykkeldelen er **skrudd av på siden**
+      (`CYCLING_ENABLED = false` i `NowPlaying.tsx`) — de roterende
+      statuslinjene + sykkelsuffikset ble for langt. All kode beholdt;
+      flipp konstanten for å hente den tilbake, og re-inkluder da Strava i
+      `ok`-beregningen i `/api/health` (unntatt nå, så abonnementsutløpet
+      ikke alarmerer om en usynlig funksjon).
       **Utløper rundt 26. november 2026** — uten fornyelse settes appen
       etter alt å dømme «Inactive» igjen, og da faller sykkeltallene stille bort
       på nytt. Sett en påminnelse.
