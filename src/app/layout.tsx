@@ -27,7 +27,12 @@ export const metadata: Metadata = {
 
 const themeScript = `
 (function() {
-  var theme = localStorage.getItem('theme');
+  // Storage can throw when site data is blocked (strict privacy modes) -
+  // it must never take the hero reveal below down with it.
+  function storedTheme() {
+    try { return localStorage.getItem('theme'); } catch (e) { return null; }
+  }
+  var theme = storedTheme();
   if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     document.documentElement.classList.add('dark');
   }
@@ -48,7 +53,7 @@ const themeScript = `
     heroScan();
   }
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
-    if (!localStorage.getItem('theme')) {
+    if (!storedTheme()) {
       document.documentElement.classList.toggle('dark', e.matches);
     }
   });

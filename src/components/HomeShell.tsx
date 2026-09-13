@@ -4,14 +4,14 @@ import { getImageProps } from "next/image";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { FadeIn } from "@/components/FadeIn";
 import { NowPlaying } from "@/components/NowPlaying";
-import { WeatherPlace, Clock } from "@/components/LocalStatus";
+import { WeatherPlace, City, Clock } from "@/components/LocalStatus";
+import { InstagramIcon, XIcon } from "@/components/SocialIcons";
 import lofoten from "@/images/lofoten.jpg";
 import lofotenVertical from "@/images/lofoten-vertical.jpg";
 import { lofotenBlur, lofotenVerticalBlur } from "@/images/blurs";
 
 // Alphabetical by name
 const projects = [
-  { name: "leverkongen", href: "https://leverkongen.no" },
   { name: "opendraw", href: "https://opendraw.no" },
   { name: "openmessage", href: "https://openmessage.no" },
   { name: "openqr", href: "https://openqr.no" },
@@ -32,9 +32,19 @@ function HeroPicture({ onReady }: { onReady: () => void }) {
 
   // Visual reveal is handled pre-hydration by the theme script's load
   // listener (html.hero-img-ready); React only gates the choreography.
+  // Second, independent visual-reveal path: the inline theme script's load
+  // listener normally adds hero-img-ready pre-hydration, but if that script
+  // is ever prevented from running (blocked storage once killed it on a
+  // locked-down browser), hydration still resolves the photo instead of
+  // stranding it on the blur.
+  function reveal() {
+    document.documentElement.classList.add("hero-img-ready");
+    onReady();
+  }
+
   // A cached image can be complete before hydration — onLoad never fires.
   useEffect(() => {
-    if (imgRef.current?.complete) onReady();
+    if (imgRef.current?.complete) reveal();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -77,7 +87,7 @@ function HeroPicture({ onReady }: { onReady: () => void }) {
         <img
           ref={imgRef}
           {...rest}
-          onLoad={onReady}
+          onLoad={reveal}
           className="hero-img object-cover"
           style={{ objectPosition: "28% 48%" }}
         />
@@ -170,14 +180,9 @@ export function HomeShell() {
         className="relative grid grid-cols-3 items-start font-mono text-xs font-medium text-brand-muted"
       >
         <WeatherPlace />
-        <a
-          href="https://www.instagram.com/christianlunde"
-          target="_blank"
-          rel="noopener"
-          className="-m-3.5 justify-self-center p-3.5 underline-offset-4 transition-opacity hover:underline focus-visible:underline sm:m-0 sm:p-0"
-        >
-          Instagram
-        </a>
+        <span className="justify-self-center">
+          <City />
+        </span>
         <span className="justify-self-end">
           <Clock />
         </span>
@@ -195,9 +200,27 @@ export function HomeShell() {
       </div>
 
       <FadeIn play={revealed} delay={0.85} y={0} duration={0.9} className="relative">
-        <nav aria-label="Latest projects" className="text-center">
+        <a
+          href="https://x.com/chr_lunde"
+          target="_blank"
+          rel="noopener"
+          aria-label="X"
+          className="absolute -bottom-1 left-0 -m-2 p-2 text-white/80 transition-colors hover:text-white focus-visible:text-white"
+        >
+          <XIcon />
+        </a>
+        <a
+          href="https://www.instagram.com/christianlunde"
+          target="_blank"
+          rel="noopener"
+          aria-label="Instagram"
+          className="absolute -bottom-1 right-0 -m-2 p-2 text-white/80 transition-colors hover:text-white focus-visible:text-white"
+        >
+          <InstagramIcon />
+        </a>
+        <nav aria-label="Recent projects" className="text-center">
           <p className="font-mono text-xs font-medium text-brand-muted">
-            Latest projects
+            Recent projects
           </p>
           <div className="mt-4 flex flex-wrap items-center justify-center gap-2 font-mono">
             {projects.map((project) => (

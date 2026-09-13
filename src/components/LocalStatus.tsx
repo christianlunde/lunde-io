@@ -108,9 +108,17 @@ export function WeatherPlace({ city, timezone }: PlaceProps) {
       )}
       {condition && <span className="sr-only">{condition.word}</span>}
       {temperature !== null && <span>{temperature} °C</span>}
-      <span>{place.city}</span>
     </span>
   );
+}
+
+/** Just the place name — the top bar shows it center stage. */
+export function City({ city, timezone }: PlaceProps) {
+  const place = useLocalPlace(city, timezone);
+
+  if (!place) return null;
+
+  return <span>{place.city}</span>;
 }
 
 /** "00:32" — minute-accurate local clock. */
