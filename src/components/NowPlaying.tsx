@@ -70,9 +70,14 @@ function buildSuffix(
       rich: (
         <>
           {" "}on my bike ({km} km this week) while listening to{" "}
-          <AlbumHover albumArt={track!.albumArt} songUrl={track!.songUrl}>
-            {track!.title}
-          </AlbumHover>
+          {/* inline-block: the title wraps to the next line as one unit
+              instead of splitting mid-title; it only breaks internally if
+              the title alone is wider than the viewport */}
+          <span className="inline-block">
+            <AlbumHover albumArt={track!.albumArt} songUrl={track!.songUrl}>
+              {track!.title}
+            </AlbumHover>
+          </span>
           .
         </>
       ),
@@ -84,9 +89,14 @@ function buildSuffix(
       rich: (
         <>
           {" "}while listening to{" "}
-          <AlbumHover albumArt={track!.albumArt} songUrl={track!.songUrl}>
-            {track!.title}
-          </AlbumHover>
+          {/* inline-block: the title wraps to the next line as one unit
+              instead of splitting mid-title; it only breaks internally if
+              the title alone is wider than the viewport */}
+          <span className="inline-block">
+            <AlbumHover albumArt={track!.albumArt} songUrl={track!.songUrl}>
+              {track!.title}
+            </AlbumHover>
+          </span>
           .
         </>
       ),

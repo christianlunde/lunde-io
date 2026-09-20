@@ -181,10 +181,10 @@ export function HomeShell() {
       >
         <WeatherPlace />
         <span className="justify-self-center">
-          <City />
+          <City city="Oslo" />
         </span>
         <span className="justify-self-end">
-          <Clock />
+          <Clock timezone="Europe/Oslo" />
         </span>
       </FadeIn>
 

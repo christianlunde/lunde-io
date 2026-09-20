@@ -127,4 +127,9 @@ also deployed and publicly reachable, just unlinked.
   follows the system live via a `matchMedia` listener in the theme script
 - `LocalClock` takes city + IANA timezone as props from Sanity `about.currentLocation`,
   falling back to the visitor's own timezone when empty
+- The homepage top bar is **pinned to Oslo** (city label + Europe/Oslo clock +
+  Oslo weather coords, decided 2026-09-20): the visitor-timezone fallback
+  showed the IANA zone's namesake city ("Stockholm" for all of Sweden) next to
+  Oslo-hardcoded weather. Sanity-driven `currentLocation` is the intended end
+  state - pick it up together with the revalidation work
 - Logo section uses text placeholders — SVGs to be added by Christian later in `public/logos/`
