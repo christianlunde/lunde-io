@@ -9,6 +9,10 @@ interface Props {
   children?: ReactNode;
   /** Reports settling: false while erasing/typing, true when at rest. */
   onStableChange?: (stable: boolean) => void;
+  /** Structures every in-flight frame of the animation (e.g. wrapping the
+   *  song-title part in an inline-block so it never splits mid-word while
+   *  being typed). Without it, animation frames render as plain text. */
+  renderPartial?: (display: string) => ReactNode;
 }
 
 /** Number of leading characters `a` and `b` share. */
@@ -27,7 +31,7 @@ function sharedSuffix(a: string, b: string, skip: number): number {
   return i;
 }
 
-export function TypewriterText({ text, speed = 50, children, onStableChange }: Props) {
+export function TypewriterText({ text, speed = 50, children, onStableChange, renderPartial }: Props) {
   const [display, setDisplay] = useState(text);
   const [stable, setStable] = useState(true);
   const [phase, setPhase] = useState<"idle" | "erasing" | "typing">("idle");
@@ -123,6 +127,7 @@ export function TypewriterText({ text, speed = 50, children, onStableChange }: P
   }, [text, speed]);
 
   if (stable && children !== undefined) return <>{children}</>;
+  if (renderPartial) return <>{renderPartial(display)}</>;
   if (phase === "typing" && display.length > 0) {
     // The newest character fades in over ~140ms instead of popping —
     // keyed by position so each keystroke replays the animation.

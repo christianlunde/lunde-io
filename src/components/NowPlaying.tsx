@@ -40,21 +40,43 @@ const LINES = [
   "Taking the scenic route",
 ];
 
-function pickStatusLine(): string {
+function chooseStatusLine(): string {
   try {
-    if (!localStorage.getItem("statusline-seen")) {
-      localStorage.setItem("statusline-seen", "1");
-      localStorage.setItem("statusline-last", CLASSIC);
-      return CLASSIC;
-    }
+    if (!localStorage.getItem("statusline-seen")) return CLASSIC;
     const last = localStorage.getItem("statusline-last");
     const pool = LINES.filter((l) => l !== last);
-    const pick = pool[Math.floor(Math.random() * pool.length)];
-    localStorage.setItem("statusline-last", pick);
-    return pick;
+    return pool[Math.floor(Math.random() * pool.length)];
   } catch {
     return CLASSIC;
   }
+}
+
+function persistStatusLine(line: string) {
+  try {
+    localStorage.setItem("statusline-seen", "1");
+    localStorage.setItem("statusline-last", line);
+  } catch {
+    // Non-critical
+  }
+}
+
+/** Structures an in-flight typewriter frame so the partially typed (or
+ *  erased) song title lives in the same inline-block as the finished
+ *  markup — it grows on its own line instead of typing on line one and
+ *  jumping down when the rich render takes over. */
+function renderSuffixPartial(display: string): ReactNode {
+  const m = display.match(/^( while listening to )(.*)$/);
+  if (!m) return display;
+  const [, phrase, rest] = m;
+  const hasDot = rest.endsWith(".");
+  const title = hasDot ? rest.slice(0, -1) : rest;
+  return (
+    <>
+      {phrase}
+      <span className="inline-block">{title}</span>
+      {hasDot ? "." : ""}
+    </>
+  );
 }
 
 function buildSuffix(
@@ -128,14 +150,20 @@ export function NowPlaying({
   const [track, setTrack] = useState<TrackData | null>(null);
   const [cycling, setCycling] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
-  // Classic until mounted so the client's first render matches the SSR HTML;
-  // the swap happens while the line is still held invisible by heroReady.
-  const [prefix, setPrefix] = useState(CLASSIC);
+  // Chosen synchronously in the first client render (SSR always carries the
+  // classic; suppressHydrationWarning covers the text swap) so no painted
+  // frame can ever show a different line than the one that stays.
+  const [prefix] = useState(() =>
+    typeof window === "undefined" ? CLASSIC : chooseStatusLine(),
+  );
+
+  useEffect(() => {
+    persistStatusLine(prefix);
+  }, [prefix]);
 
   useEffect(() => {
     let active = true;
     setMounted(true);
-    setPrefix(pickStatusLine());
 
     async function fetchTrack() {
       try {
@@ -179,8 +207,11 @@ export function NowPlaying({
 
   if (!mounted) {
     return (
-      <p className="font-mono text-[15px] tracking-wide text-brand-muted text-center">
-        Currently exploring what’s next.
+      <p
+        suppressHydrationWarning
+        className="font-mono text-[15px] tracking-wide text-brand-muted text-center"
+      >
+        {prefix}.
       </p>
     );
   }
@@ -191,9 +222,18 @@ export function NowPlaying({
   );
 
   return (
-    <p className="font-mono text-[15px] tracking-wide text-brand-muted text-center whitespace-pre-line">
+    <p
+      suppressHydrationWarning
+      className="font-mono text-[15px] tracking-wide text-brand-muted text-center whitespace-pre-line"
+    >
       {prefix}
-      <TypewriterText text={suffixText} onStableChange={onStableChange}>{suffixRich}</TypewriterText>
+      <TypewriterText
+        text={suffixText}
+        onStableChange={onStableChange}
+        renderPartial={renderSuffixPartial}
+      >
+        {suffixRich}
+      </TypewriterText>
     </p>
   );
 }
