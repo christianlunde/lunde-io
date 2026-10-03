@@ -147,6 +147,25 @@ haster mest. Ingenting av dette er fikset ennå.
 
 ### Løst
 
+- [x] **Spotify-refresh-tokenen ble trukket tilbake** (oppdaget og løst
+      3. oktober 2026). `/api/health` viste `spotify: fail` (503), lokal probe
+      ga `invalid_grant — Refresh token revoked` — skjer ved passordbytte,
+      «logg ut overalt» eller app-fjerning på Spotify-kontoen. Helsesjekken
+      gjorde jobben sin; ingen ukers stillhet denne gangen.
+      **Re-autorisering uten bootstrap-ruta** (den er slettet fra main, med
+      vilje — dette er prosedyren nå):
+      1. Bygg authorize-URL lokalt fra `.env.local` (client_id, scopes
+         `user-read-currently-playing user-read-recently-played user-top-read`,
+         redirect `https://lunde.io/api/spotify/callback`) og åpne i nettleser
+      2. Godta → lander på 404 (rutа finnes ikke — greit), kopier `code` fra
+         adressefeltet (engangs, ~60 s levetid)
+      3. Veksle koden lokalt mot ny refresh_token
+         (`grant_type=authorization_code`, Basic auth), skriv den inn i
+         `.env.local` — aldri i chat/commit
+      4. Oppdater `SPOTIFY_REFRESH_TOKEN` i Vercel (dashboard eller
+         `vercel env`) og **redeploy** — env-endringer gjelder kun nye deploys
+
+
 - [x] **Strava-appen var deaktivert av Strava** (oppdaget og løst 26. august 2026).
       `/athlete/activities` svarte `403 Forbidden` med
       `{"resource":"Application","field":"Status","code":"Inactive"}` mens
